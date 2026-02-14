@@ -1,4 +1,4 @@
-<hibernate-configuration xmlns="http://www.hibernate.org/xsd/hibernate-configuration">
+<hibernate-configuration xmlns="http://www.hibernate.org/xsd/orm/cfg">
 	<session-factory>
 
 		<property name="hibernate.connection.driver_class">
@@ -8,7 +8,13 @@
 			jdbc:mysql://localhost:3306/library_oop
 		</property>
 		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.connection.password">password</property>
+
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
+
+		<mapping class="com.oop.library_management.domain.model.Role" />
 
 	</session-factory>
 </hibernate-configuration>
