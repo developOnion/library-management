@@ -1,22 +1,27 @@
-package com.oop.library_management.domain.model;
+package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles")
-public class Role {
+@Table(name = "categories")
+public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true, length = 50)
+	@Column(nullable = false, unique = true, length = 100)
 	private String name;
 
-	public Role() {
+	protected Category() {
+		// Required by JPA
 	}
 
-	public Role(String name) {
+	public Category(String name) {
+		this.name = name;
+	}
+
+	public Category(String name, String description) {
 		this.name = name;
 	}
 
@@ -31,5 +36,5 @@ public class Role {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 }
+

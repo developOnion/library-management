@@ -1,4 +1,4 @@
-package com.oop.library_management.domain.model;
+package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
 
@@ -60,6 +60,10 @@ public abstract class User {
 		this.createdAt = LocalDateTime.now();
 	}
 
+	public Long getId() {
+		return id;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -114,5 +118,9 @@ public abstract class User {
 
 	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
 }
