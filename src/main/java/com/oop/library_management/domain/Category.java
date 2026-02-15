@@ -13,9 +13,6 @@ public class Category {
 	@Column(nullable = false, unique = true, length = 100)
 	private String name;
 
-	@Column(length = 255)
-	private String description;
-
 	protected Category() {
 		// Required by JPA
 	}
@@ -26,7 +23,6 @@ public class Category {
 
 	public Category(String name, String description) {
 		this.name = name;
-		this.description = description;
 	}
 
 	public Long getId() {
@@ -37,16 +33,8 @@ public class Category {
 		return name;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 }
 
