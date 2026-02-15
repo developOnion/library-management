@@ -1,8 +1,7 @@
-package com.oop.library_management.domain.model;
+package com.oop.library_management.domain;
 
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,7 +22,9 @@ public class Member extends User {
 		super(username, password, firstName, lastName, email, role);
 	}
 
+	// derived from id
 	public String getMembershipNumber() {
+
 		if (getId() == null) {
 			return null; // not yet persisted
 		}

@@ -14,7 +14,9 @@
 		<property name="hibernate.format_sql">true</property>
 		<property name="hibernate.hbm2ddl.auto">update</property>
 
-		<mapping class="com.oop.library_management.domain.model.Role" />
+		<mapping class="com.oop.library_management.domain.Role" />
+		<mapping class="com.oop.library_management.domain.User" />
+		<mapping class="com.oop.library_management.domain.Member" />
 
 	</session-factory>
 </hibernate-configuration>

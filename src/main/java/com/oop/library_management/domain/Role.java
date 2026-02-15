@@ -1,4 +1,4 @@
-package com.oop.library_management.domain.model;
+package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
 
