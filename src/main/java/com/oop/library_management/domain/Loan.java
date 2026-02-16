@@ -1,6 +1,8 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -13,16 +15,20 @@ public class Loan {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "member_id", nullable = false)
+	@NotNull(message = "Member is required")
 	private Member member;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "book_id", nullable = false)
+	@NotNull(message = "Book is required")
 	private Book book;
 
 	@Column(name = "loan_date", nullable = false)
+	@NotNull(message = "Loan date is required")
 	private LocalDate loanDate;
 
 	@Column(name = "due_date", nullable = false)
+	@NotNull(message = "Due date is required")
 	private LocalDate dueDate;
 
 	@Column(name = "return_date")
@@ -30,6 +36,7 @@ public class Loan {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	@NotNull(message = "Loan status is required")
 	private LoanStatus status;
 
 	protected Loan() {

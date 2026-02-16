@@ -2,6 +2,7 @@ package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,10 +17,12 @@ public class Fine {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "loan_id", nullable = false)
+	@NotNull(message = "Loan is required")
 	private Loan loan;
 
 	// total fine amount, calculated based on number of days overdue and fine rate
 	@Column(nullable = false, precision = 10, scale = 2)
+	@NotNull(message = "Fine amount is required")
 	@Min(value = 0, message = "Fine amount cannot be negative")
 	private BigDecimal amount;
 
