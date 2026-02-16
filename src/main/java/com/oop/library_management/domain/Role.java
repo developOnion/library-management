@@ -1,6 +1,8 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "roles")
@@ -11,6 +13,8 @@ public class Role {
 	private Long id;
 
 	@Column(nullable = false, unique = true, length = 50)
+	@NotBlank(message = "Role name is required")
+	@Size(max = 50, message = "Role name must be at most 50 characters")
 	private String name;
 
 	public Role() {

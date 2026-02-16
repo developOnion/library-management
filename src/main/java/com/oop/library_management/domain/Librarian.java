@@ -1,6 +1,7 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "librarians")
@@ -8,6 +9,7 @@ public class Librarian extends User {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	@NotNull(message = "Librarian position is required")
 	private LibrarianPosition position;
 
 	protected Librarian() {

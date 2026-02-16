@@ -1,6 +1,9 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -13,19 +16,30 @@ public abstract class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true, length = 100)
+	@Column(nullable = false, unique = true, length = 30)
+	@NotBlank(message = "Username is required")
+	@Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
 	private String username;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 128)
+	@NotBlank(message = "Password is required")
+	@Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
 	private String password;
 
-	@Column(name = "first_name", nullable = false, length = 100)
+	@Column(name = "first_name", nullable = false, length = 50)
+	@NotBlank(message = "First name is required")
+	@Size(max = 50, message = "First name must be at most 50 characters")
 	private String firstName;
 
-	@Column(name = "last_name" ,nullable = false, length = 100)
+	@Column(name = "last_name", nullable = false, length = 50)
+	@NotBlank(message = "Last name is required")
+	@Size(max = 50, message = "Last name must be at most 50 characters")
 	private String lastName;
 
-	@Column(nullable = false,	unique = true ,length = 150)
+	@Column(nullable = false,	unique = true)
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid email format")
+	@Size(max = 255, message = "Email must be at most 255 characters")
 	private String email;
 
 	@ManyToOne(optional = false)
@@ -35,7 +49,7 @@ public abstract class User {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(name = "created_at")
+	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 
 	public User() {
@@ -118,6 +132,10 @@ public abstract class User {
 
 	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 
 	public String getFullName() {
