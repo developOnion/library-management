@@ -1,6 +1,10 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,10 +16,13 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false)
+	@NotBlank(message = "Title is required")
+	@Size(max = 255, message = "Title must be at most 255 characters")
 	private String title;
 
 	@Column(unique = true, length = 20)
+	@Size(max = 20, message = "ISBN must be at most 20 characters")
 	private String isbn;
 
 	@ManyToMany
@@ -35,9 +42,11 @@ public class Book {
 	private Set<Category> categories = new HashSet<>();
 
 	@Column(name = "total_copies", nullable = false)
+	@Min(value = 1, message = "Total copies must be at least 1")
 	private int totalCopies;
 
 	@Column(name = "available_copies", nullable = false)
+	@Min(value = 0, message = "Available copies cannot be negative")
 	private int availableCopies;
 
 	protected Book() {}
