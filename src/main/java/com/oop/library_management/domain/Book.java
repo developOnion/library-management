@@ -31,7 +31,7 @@ public class Book {
 			joinColumns = @JoinColumn(name = "book_id"),
 			inverseJoinColumns = @JoinColumn(name = "author_id")
 	)
-	private Set<Author> authors = new HashSet<>();
+	private final Set<Author> authors = new HashSet<>();
 
 	@ManyToMany
 	@JoinTable(
@@ -39,7 +39,7 @@ public class Book {
 			joinColumns = @JoinColumn(name = "book_id"),
 			inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
-	private Set<Category> categories = new HashSet<>();
+	private final Set<Category> categories = new HashSet<>();
 
 	@Column(name = "total_copies", nullable = false)
 	@Min(value = 1, message = "Total copies must be at least 1")
@@ -49,7 +49,8 @@ public class Book {
 	@Min(value = 0, message = "Available copies cannot be negative")
 	private int availableCopies;
 
-	protected Book() {}
+	protected Book() {
+	}
 
 	public Book(String title, int totalCopies) {
 		this.title = title;
@@ -57,18 +58,49 @@ public class Book {
 		this.availableCopies = totalCopies;
 	}
 
-	public Long getId() { return id; }
-	public String getTitle() { return title; }
-	public String getIsbn() { return isbn; }
-	public Set<Author> getAuthors() { return authors; }
-	public Set<Category> getCategories() { return categories; }
-	public int getTotalCopies() { return totalCopies; }
-	public int getAvailableCopies() { return availableCopies; }
+	public Long getId() {
+		return id;
+	}
 
-	public void setTitle(String title) { this.title = title; }
-	public void setIsbn(String isbn) { this.isbn = isbn; }
-	public void setTotalCopies(int totalCopies) { this.totalCopies = totalCopies; }
-	public void setAvailableCopies(int availableCopies) { this.availableCopies = availableCopies; }
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public Set<Author> getAuthors() {
+		return authors;
+	}
+
+	public Set<Category> getCategories() {
+		return categories;
+	}
+
+	public int getTotalCopies() {
+		return totalCopies;
+	}
+
+	public void setTotalCopies(int totalCopies) {
+		this.totalCopies = totalCopies;
+	}
+
+	public int getAvailableCopies() {
+		return availableCopies;
+	}
+
+	public void setAvailableCopies(int availableCopies) {
+		this.availableCopies = availableCopies;
+	}
 
 	// helper methods
 	public void addAuthor(Author author) {
