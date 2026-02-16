@@ -1,6 +1,8 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -18,6 +20,7 @@ public class Fine {
 
 	// total fine amount, calculated based on number of days overdue and fine rate
 	@Column(nullable = false, precision = 10, scale = 2)
+	@Min(value = 0, message = "Fine amount cannot be negative")
 	private BigDecimal amount;
 
 	@Column(nullable = false)

@@ -1,6 +1,8 @@
 package com.oop.library_management.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
@@ -11,6 +13,8 @@ public class Category {
 	private Long id;
 
 	@Column(nullable = false, unique = true, length = 100)
+	@NotBlank(message = "Category name is required")
+	@Size(max = 100, message = "Category name must be at most 100 characters")
 	private String name;
 
 	protected Category() {
