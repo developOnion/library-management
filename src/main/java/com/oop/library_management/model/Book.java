@@ -1,4 +1,4 @@
-package com.oop.library_management.domain;
+package com.oop.library_management.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
