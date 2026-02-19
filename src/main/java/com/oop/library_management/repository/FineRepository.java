@@ -1,7 +1,7 @@
 package com.oop.library_management.repository;
 
-import com.oop.library_management.domain.Fine;
-import com.oop.library_management.domain.Loan;
+import com.oop.library_management.model.Fine;
+import com.oop.library_management.model.Loan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

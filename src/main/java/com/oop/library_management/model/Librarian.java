@@ -1,4 +1,4 @@
-package com.oop.library_management.domain;
+package com.oop.library_management.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -21,11 +21,10 @@ public class Librarian extends User {
 			String password,
 			String firstName,
 			String lastName,
-			String email,
-			Role role,
 			LibrarianPosition position
 	) {
-		super(username, password, firstName, lastName, email, role);
+
+		super(username, password, firstName, lastName);
 		this.position = position;
 	}
 
