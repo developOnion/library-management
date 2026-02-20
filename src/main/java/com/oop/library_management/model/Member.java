@@ -17,8 +17,10 @@ public class Member extends User {
       String username,
       String password,
       String firstName,
-      String lastName) {
-    super(username, password, firstName, lastName);
+      String lastName,
+			Role role
+	) {
+    super(username, password, firstName, lastName, role);
   }
 
   @PostPersist

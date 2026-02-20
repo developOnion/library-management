@@ -1,68 +1,111 @@
 package com.oop.library_management.service;
 
-import com.oop.library_management.dto.UserDTO;
-import com.oop.library_management.mapper.UserMapper;
-import com.oop.library_management.model.Member;
-import com.oop.library_management.model.User;
-import com.oop.library_management.repository.UserRepository;
-import jakarta.validation.Valid;
+import com.oop.library_management.dto.UserRequestDTO;
+import com.oop.library_management.dto.UserResponseDTO;
 import com.oop.library_management.exception.ValidationException;
+import com.oop.library_management.mapper.UserMapper;
+import com.oop.library_management.model.Librarian;
+import com.oop.library_management.model.Member;
+import com.oop.library_management.model.Role;
+import com.oop.library_management.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-  private final UserRepository userRepository;
-  private final UserMapper userMapper;
+	private final UserRepository userRepository;
+	private final UserMapper userMapper;
 
-  public UserService(
-      UserRepository userRepository,
-      UserMapper userMapper) {
+	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
-    this.userMapper = userMapper;
-    this.userRepository = userRepository;
-  }
+	public UserService(
+			UserRepository userRepository,
+			UserMapper userMapper
+	) {
 
-  public UserDTO register(@Valid UserDTO request) {
+		this.userMapper = userMapper;
+		this.userRepository = userRepository;
+	}
 
-    if (userRepository.existsByUsername(request.getUsername())) {
-      throw new ValidationException("Username already exists");
-    }
+	@Transactional
+	public UserResponseDTO registerMember(UserRequestDTO request) {
 
-    if (!isValidUsername(request.getUsername())) {
-      throw new ValidationException(
-          "Username must be 3-30 characters long and contain only letters and numbers");
-    }
+		validateUserRequest(request);
 
-    if (!isValidPassword(request.getPassword())) {
-      throw new ValidationException(
-          "Password must contain at least one number and one character");
-    }
+		Member member = new Member(
+				request.getUsername(),
+				passwordEncoder.encode(request.getPassword()),
+				request.getFirstName(),
+				request.getLastName(),
+				Role.MEMBER
+		);
 
-    User user = new Member(
-        request.getUsername(),
-        request.getPassword(),
-        request.getFirstName(),
-        request.getLastName());
+		Member savedMember = userRepository.save(member);
 
-    userRepository.save(user);
+		return userMapper.toDTO(savedMember);
+	}
 
-    return userMapper.toDTO(user);
-  }
+	public UserResponseDTO registerLibrarian(UserRequestDTO userDTO) {
 
-  private boolean isValidPassword(String password) {
+		validateLibrarianRequest(userDTO);
 
-    boolean hasNumber = password.matches(".*\\d.*");
-    boolean hasCharacter = password.matches(".*[a-zA-Z].*");
+		Librarian librarian = new Librarian(
+				userDTO.getUsername(),
+				passwordEncoder.encode(userDTO.getPassword()),
+				userDTO.getFirstName(),
+				userDTO.getLastName(),
+				Role.LIBRARIAN,
+				userDTO.getPosition()
+		);
 
-    return hasNumber && hasCharacter;
-  }
+		Librarian savedLibrarian = userRepository.save(librarian);
 
-  private boolean isValidUsername(String username) {
+		return userMapper.toDTO(savedLibrarian);
+	}
 
-    boolean hasNumber = username.matches(".*\\d.*");
-    boolean hasOnlyLettersAndNumbers = username.matches("^[a-zA-Z0-9]+$");
+	private boolean isValidPassword(String password) {
 
-    return hasOnlyLettersAndNumbers && hasNumber;
-  }
+		boolean hasNumber = password.matches(".*\\d.*");
+		boolean hasCharacter = password.matches(".*[a-zA-Z].*");
+
+		return hasNumber && hasCharacter;
+	}
+
+	private boolean isValidUsername(String username) {
+
+		boolean hasNumber = username.matches(".*\\d.*");
+		boolean hasOnlyLettersAndNumbers = username.matches("^[a-zA-Z0-9]+$");
+
+		return hasOnlyLettersAndNumbers && hasNumber;
+	}
+
+	private void validateLibrarianRequest(UserRequestDTO userDTO) {
+
+		validateUserRequest(userDTO);
+
+		if (userDTO.getPosition() == null) {
+			throw new ValidationException("Librarian position is required");
+		}
+	}
+
+	private void validateUserRequest(UserRequestDTO userDTO) {
+
+		if (userRepository.existsByUsername(userDTO.getUsername())) {
+			throw new ValidationException("Username already exists");
+		}
+
+		if (!isValidUsername(userDTO.getUsername())) {
+			throw new ValidationException(
+					"Username must be 3-30 characters long and contain only letters and numbers");
+		}
+
+		if (!isValidPassword(userDTO.getPassword())) {
+			throw new ValidationException(
+					"Password must contain at least one number and one character");
+		}
+	}
+
 }

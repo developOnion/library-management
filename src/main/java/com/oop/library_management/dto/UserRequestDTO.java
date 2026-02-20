@@ -1,11 +1,12 @@
 package com.oop.library_management.dto;
 
+import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
+import com.oop.library_management.model.LibrarianPosition;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class UserDTO {
-
-	private Long id;
+public class UserRequestDTO {
 
 	@NotBlank(message = "Username is required")
 	@Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
@@ -23,30 +24,21 @@ public class UserDTO {
 	@Size(max = 50, message = "Last name must be at most 50 characters")
 	private String lastName;
 
-	public UserDTO() {
+	@NotNull(
+			groups = CreateLibrarianValidation.class,
+			message = "Position is required for librarian"
+	)
+	private LibrarianPosition position;
+
+	public UserRequestDTO() {
 	}
 
-	public UserDTO(
-			Long id,
-			String username,
-			String password,
-			String firstName,
-			String lastName
-	) {
-
-		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.firstName = firstName;
-		this.lastName = lastName;
+	public LibrarianPosition getPosition() {
+		return position;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public void setPosition(LibrarianPosition position) {
+		this.position = position;
 	}
 
 	public String getUsername() {
