@@ -48,7 +48,7 @@ public class UserService {
 		return userMapper.toDTO(savedMember);
 	}
 
-	public UserResponseDTO registerLibrarian(@Valid UserRequestDTO userDTO) {
+	public UserResponseDTO registerLibrarian(UserRequestDTO userDTO) {
 
 		validateLibrarianRequest(userDTO);
 
@@ -82,7 +82,7 @@ public class UserService {
 		return hasOnlyLettersAndNumbers && hasNumber;
 	}
 
-	private void validateLibrarianRequest(@Valid UserRequestDTO userDTO) {
+	private void validateLibrarianRequest(UserRequestDTO userDTO) {
 
 		validateUserRequest(userDTO);
 
@@ -91,7 +91,7 @@ public class UserService {
 		}
 	}
 
-	private void validateUserRequest(@Valid UserRequestDTO userDTO) {
+	private void validateUserRequest(UserRequestDTO userDTO) {
 
 		if (userRepository.existsByUsername(userDTO.getUsername())) {
 			throw new ValidationException("Username already exists");

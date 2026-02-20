@@ -1,7 +1,9 @@
 package com.oop.library_management.dto;
 
+import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
 import com.oop.library_management.model.LibrarianPosition;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class UserRequestDTO {
@@ -22,6 +24,10 @@ public class UserRequestDTO {
 	@Size(max = 50, message = "Last name must be at most 50 characters")
 	private String lastName;
 
+	@NotNull(
+			groups = CreateLibrarianValidation.class,
+			message = "Position is required for librarian"
+	)
 	private LibrarianPosition position;
 
 	public UserRequestDTO() {

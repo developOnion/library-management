@@ -1,9 +1,6 @@
 package com.oop.library_management.dto;
 
 import com.oop.library_management.model.Role;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 public class UserResponseDTO {
 
