@@ -8,20 +8,9 @@ import jakarta.validation.constraints.Size;
 public class UserResponseDTO {
 
 	private Long id;
-
-	@NotBlank(message = "Username is required")
-	@Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
 	private String username;
-
-	@NotBlank(message = "First name is required")
-	@Size(max = 50, message = "First name must be at most 50 characters")
 	private String firstName;
-
-	@NotBlank(message = "Last name is required")
-	@Size(max = 50, message = "Last name must be at most 50 characters")
 	private String lastName;
-
-	@NotNull(message = "Role is required")
 	private Role role;
 
 	public UserResponseDTO() {
