@@ -21,10 +21,11 @@ public class Librarian extends User {
 			String password,
 			String firstName,
 			String lastName,
+			Role role,
 			LibrarianPosition position
 	) {
 
-		super(username, password, firstName, lastName);
+		super(username, password, firstName, lastName, role);
 		this.position = position;
 	}
 

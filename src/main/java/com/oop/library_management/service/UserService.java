@@ -1,12 +1,17 @@
 package com.oop.library_management.service;
 
-import com.oop.library_management.dto.UserDTO;
+import com.oop.library_management.dto.UserRequestDTO;
+import com.oop.library_management.dto.UserResponseDTO;
 import com.oop.library_management.mapper.UserMapper;
+import com.oop.library_management.model.Librarian;
+import com.oop.library_management.model.LibrarianPosition;
 import com.oop.library_management.model.Member;
-import com.oop.library_management.model.User;
+import com.oop.library_management.model.Role;
 import com.oop.library_management.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import com.oop.library_management.exception.ValidationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,39 +20,33 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
+	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+
   public UserService(
       UserRepository userRepository,
-      UserMapper userMapper) {
+      UserMapper userMapper
+	) {
 
     this.userMapper = userMapper;
     this.userRepository = userRepository;
   }
 
-  public UserDTO register(@Valid UserDTO request) {
+	@Transactional
+  public UserResponseDTO registerMember(UserRequestDTO request) {
 
-    if (userRepository.existsByUsername(request.getUsername())) {
-      throw new ValidationException("Username already exists");
-    }
+		validateUserRequest(request);
 
-    if (!isValidUsername(request.getUsername())) {
-      throw new ValidationException(
-          "Username must be 3-30 characters long and contain only letters and numbers");
-    }
-
-    if (!isValidPassword(request.getPassword())) {
-      throw new ValidationException(
-          "Password must contain at least one number and one character");
-    }
-
-    User user = new Member(
+		Member member = new Member(
         request.getUsername(),
-        request.getPassword(),
+        passwordEncoder.encode(request.getPassword()),
         request.getFirstName(),
-        request.getLastName());
+        request.getLastName(),
+				Role.MEMBER
+		);
 
-    userRepository.save(user);
+    Member savedMember = userRepository.save(member);
 
-    return userMapper.toDTO(user);
+    return userMapper.toDTO(savedMember);
   }
 
   private boolean isValidPassword(String password) {
@@ -65,4 +64,40 @@ public class UserService {
 
     return hasOnlyLettersAndNumbers && hasNumber;
   }
+
+	public UserResponseDTO registerLibrarian(@Valid UserRequestDTO userDTO) {
+
+		validateUserRequest(userDTO);
+
+		Librarian librarian = new Librarian(
+				userDTO.getUsername(),
+				passwordEncoder.encode(userDTO.getPassword()),
+				userDTO.getFirstName(),
+				userDTO.getLastName(),
+				Role.LIBRARIAN,
+				userDTO.getPosition()
+		);
+
+		Librarian savedLibrarian = userRepository.save(librarian);
+
+		return userMapper.toDTO(savedLibrarian);
+	}
+
+	private void validateUserRequest(@Valid UserRequestDTO userDTO) {
+
+		if (userRepository.existsByUsername(userDTO.getUsername())) {
+			throw new ValidationException("Username already exists");
+		}
+
+		if (!isValidUsername(userDTO.getUsername())) {
+			throw new ValidationException(
+					"Username must be 3-30 characters long and contain only letters and numbers");
+		}
+
+		if (!isValidPassword(userDTO.getPassword())) {
+			throw new ValidationException(
+					"Password must contain at least one number and one character");
+		}
+	}
+
 }

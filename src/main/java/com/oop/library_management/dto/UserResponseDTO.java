@@ -1,19 +1,17 @@
 package com.oop.library_management.dto;
 
+import com.oop.library_management.model.Role;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class UserDTO {
+public class UserResponseDTO {
 
 	private Long id;
 
 	@NotBlank(message = "Username is required")
 	@Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
 	private String username;
-
-	@NotBlank(message = "Password is required")
-	@Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
-	private String password;
 
 	@NotBlank(message = "First name is required")
 	@Size(max = 50, message = "First name must be at most 50 characters")
@@ -23,22 +21,33 @@ public class UserDTO {
 	@Size(max = 50, message = "Last name must be at most 50 characters")
 	private String lastName;
 
-	public UserDTO() {
+	@NotNull(message = "Role is required")
+	private Role role;
+
+	public UserResponseDTO() {
 	}
 
-	public UserDTO(
+	public UserResponseDTO(
 			Long id,
 			String username,
-			String password,
 			String firstName,
-			String lastName
+			String lastName,
+			Role role
 	) {
 
 		this.id = id;
 		this.username = username;
-		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.role = role;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	public Long getId() {
@@ -55,14 +64,6 @@ public class UserDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getFirstName() {

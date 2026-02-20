@@ -2,6 +2,7 @@ package com.oop.library_management.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,11 @@ public abstract class User {
   @Size(max = 50, message = "Last name must be at most 50 characters")
   private String lastName;
 
+	@NotNull(message = "Role is required")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private Role role;
+
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
@@ -49,12 +55,15 @@ public abstract class User {
       String username,
       String password,
       String firstName,
-      String lastName) {
+      String lastName,
+			Role role
+	) {
 
     this.username = username;
     this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
+		this.role = role;
     this.createdAt = LocalDateTime.now();
   }
 
@@ -113,4 +122,12 @@ public abstract class User {
   public String getFullName() {
     return firstName + " " + lastName;
   }
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
 }
