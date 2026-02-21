@@ -1,15 +1,21 @@
 package com.oop.library_management.service;
 
+import com.oop.library_management.dto.LoginRequestDTO;
 import com.oop.library_management.dto.UserRequestDTO;
 import com.oop.library_management.dto.UserResponseDTO;
+import com.oop.library_management.exception.AuthenticationException;
 import com.oop.library_management.exception.ValidationException;
 import com.oop.library_management.mapper.UserMapper;
 import com.oop.library_management.model.Librarian;
 import com.oop.library_management.model.Member;
 import com.oop.library_management.model.Role;
+import com.oop.library_management.model.User;
 import com.oop.library_management.repository.UserRepository;
+import com.oop.library_management.security.JwtUtil;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +24,19 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+	private final AuthenticationManager authManager;
+	private final JwtUtil jwtService;
 
 	public UserService(
 			UserRepository userRepository,
-			UserMapper userMapper
+			UserMapper userMapper, AuthenticationManager authManager, JwtUtil jwtService
 	) {
 
 		this.userMapper = userMapper;
 		this.userRepository = userRepository;
+		this.authManager = authManager;
+		this.jwtService = jwtService;
 	}
 
 	@Transactional
@@ -48,6 +57,7 @@ public class UserService {
 		return userMapper.toDTO(savedMember);
 	}
 
+	@Transactional
 	public UserResponseDTO registerLibrarian(UserRequestDTO userDTO) {
 
 		validateLibrarianRequest(userDTO);
@@ -64,6 +74,36 @@ public class UserService {
 		Librarian savedLibrarian = userRepository.save(librarian);
 
 		return userMapper.toDTO(savedLibrarian);
+	}
+
+	@Transactional
+	public String verifyUserCredentials(LoginRequestDTO loginRequest) {
+
+		try {
+			// Authenticate user credentials
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+					loginRequest.getUsername(),
+					loginRequest.getPassword()
+			);
+
+			authManager.authenticate(authToken);
+
+			// Fetch user from database to get the role
+			User user = userRepository.findByUsername(loginRequest.getUsername())
+					.orElseThrow(() -> new AuthenticationException("User not found"));
+
+			// Update last login
+			user.setLastLogin(java.time.LocalDateTime.now());
+			userRepository.save(user);
+
+			return jwtService.generateToken(
+					user.getUsername(),
+					user.getRole()
+			);
+
+		} catch (org.springframework.security.core.AuthenticationException e) {
+			throw new AuthenticationException("Invalid username or password");
+		}
 	}
 
 	private boolean isValidPassword(String password) {
@@ -107,5 +147,4 @@ public class UserService {
 					"Password must contain at least one number and one character");
 		}
 	}
-
 }
