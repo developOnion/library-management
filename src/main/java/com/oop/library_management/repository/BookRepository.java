@@ -1,6 +1,6 @@
 package com.oop.library_management.repository;
 
-import com.oop.library_management.model.Book;
+import com.oop.library_management.model.book.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

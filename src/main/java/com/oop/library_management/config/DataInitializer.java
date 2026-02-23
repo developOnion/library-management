@@ -1,9 +1,9 @@
 package com.oop.library_management.config;
 
-import com.oop.library_management.model.Librarian;
-import com.oop.library_management.model.LibrarianPosition;
-import com.oop.library_management.model.Role;
-import com.oop.library_management.model.User;
+import com.oop.library_management.model.user.Librarian;
+import com.oop.library_management.model.user.LibrarianPosition;
+import com.oop.library_management.model.user.Role;
+import com.oop.library_management.model.user.User;
 import com.oop.library_management.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

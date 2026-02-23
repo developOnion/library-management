@@ -1,6 +1,6 @@
-package com.oop.library_management.dto;
+package com.oop.library_management.dto.user;
 
-import com.oop.library_management.model.Role;
+import com.oop.library_management.model.user.Role;
 
 public class UserResponseDTO {
 

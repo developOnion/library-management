@@ -1,7 +1,7 @@
-package com.oop.library_management.dto;
+package com.oop.library_management.dto.user;
 
 import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
-import com.oop.library_management.model.LibrarianPosition;
+import com.oop.library_management.model.user.LibrarianPosition;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

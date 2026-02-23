@@ -1,9 +1,9 @@
 package com.oop.library_management.service;
 
-import com.oop.library_management.dto.AuthorResponseDTO;
+import com.oop.library_management.dto.author.AuthorResponseDTO;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.mapper.AuthorMapper;
-import com.oop.library_management.model.Author;
+import com.oop.library_management.model.book.Author;
 import com.oop.library_management.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

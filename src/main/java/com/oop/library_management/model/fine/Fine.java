@@ -1,5 +1,6 @@
-package com.oop.library_management.model;
+package com.oop.library_management.model.fine;
 
+import com.oop.library_management.model.loan.Loan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

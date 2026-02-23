@@ -1,15 +1,15 @@
 package com.oop.library_management.service;
 
-import com.oop.library_management.dto.LoginRequestDTO;
-import com.oop.library_management.dto.UserRequestDTO;
-import com.oop.library_management.dto.UserResponseDTO;
+import com.oop.library_management.dto.user.LoginRequestDTO;
+import com.oop.library_management.dto.user.UserRequestDTO;
+import com.oop.library_management.dto.user.UserResponseDTO;
 import com.oop.library_management.exception.AuthenticationException;
 import com.oop.library_management.exception.ValidationException;
 import com.oop.library_management.mapper.UserMapper;
-import com.oop.library_management.model.Librarian;
-import com.oop.library_management.model.Member;
-import com.oop.library_management.model.Role;
-import com.oop.library_management.model.User;
+import com.oop.library_management.model.user.Librarian;
+import com.oop.library_management.model.user.Member;
+import com.oop.library_management.model.user.Role;
+import com.oop.library_management.model.user.User;
 import com.oop.library_management.repository.UserRepository;
 import com.oop.library_management.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,7 +51,7 @@ public class UserService {
 				Role.MEMBER
 		);
 
-		Member savedMember = userRepository.save(member);
+		User savedMember = userRepository.save(member);
 
 		return userMapper.toDTO(savedMember);
 	}
@@ -70,7 +70,7 @@ public class UserService {
 				userDTO.getPosition()
 		);
 
-		Librarian savedLibrarian = userRepository.save(librarian);
+		User savedLibrarian = userRepository.save(librarian);
 
 		return userMapper.toDTO(savedLibrarian);
 	}

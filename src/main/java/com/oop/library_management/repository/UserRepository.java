@@ -1,6 +1,6 @@
 package com.oop.library_management.repository;
 
-import com.oop.library_management.model.User;
+import com.oop.library_management.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

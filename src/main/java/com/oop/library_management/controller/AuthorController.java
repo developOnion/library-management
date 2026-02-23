@@ -1,6 +1,6 @@
 package com.oop.library_management.controller;
 
-import com.oop.library_management.dto.AuthorResponseDTO;
+import com.oop.library_management.dto.author.AuthorResponseDTO;
 import com.oop.library_management.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/authors")
+@RequestMapping("/api/authors")
 public class AuthorController {
 
 	private final AuthorService authorService;
@@ -32,6 +32,17 @@ public class AuthorController {
 	}
 
 	@PreAuthorize("hasAuthority('LIBRARIAN')")
+	@GetMapping("/{id}")
+	public ResponseEntity<AuthorResponseDTO> getAuthorById(
+			@PathVariable Long id
+	) {
+
+		AuthorResponseDTO author = authorService.getAuthorById(id);
+
+		return ResponseEntity.ok().body(author);
+	}
+
+	@PreAuthorize("hasAuthority('LIBRARIAN')")
 	@PostMapping
 	public ResponseEntity<AuthorResponseDTO> createAuthor(
 			@Valid @RequestBody AuthorResponseDTO authorRequestDTO
@@ -40,14 +51,5 @@ public class AuthorController {
 		AuthorResponseDTO createdAuthor = authorService.createAuthor(authorRequestDTO);
 
 		return ResponseEntity.ok().body(createdAuthor);
-	}
-
-	public ResponseEntity<AuthorResponseDTO> getAuthorById(
-			@PathVariable Long id
-	) {
-
-		AuthorResponseDTO author = authorService.getAuthorById(id);
-
-		return ResponseEntity.ok().body(author);
 	}
 }

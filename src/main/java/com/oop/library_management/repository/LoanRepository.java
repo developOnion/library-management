@@ -1,9 +1,9 @@
 package com.oop.library_management.repository;
 
-import com.oop.library_management.model.Book;
-import com.oop.library_management.model.Loan;
-import com.oop.library_management.model.LoanStatus;
-import com.oop.library_management.model.Member;
+import com.oop.library_management.model.book.Book;
+import com.oop.library_management.model.loan.Loan;
+import com.oop.library_management.model.loan.LoanStatus;
+import com.oop.library_management.model.user.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

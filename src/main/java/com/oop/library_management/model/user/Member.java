@@ -1,4 +1,4 @@
-package com.oop.library_management.model;
+package com.oop.library_management.model.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.PostPersist;

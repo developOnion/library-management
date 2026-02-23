@@ -1,4 +1,4 @@
-package com.oop.library_management.model;
+package com.oop.library_management.model.user;
 
 public enum LibrarianPosition {
 

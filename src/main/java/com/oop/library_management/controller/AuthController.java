@@ -1,6 +1,6 @@
 package com.oop.library_management.controller;
 
-import com.oop.library_management.dto.LoginRequestDTO;
+import com.oop.library_management.dto.user.LoginRequestDTO;
 import com.oop.library_management.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

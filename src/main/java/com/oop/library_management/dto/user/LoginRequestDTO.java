@@ -1,4 +1,4 @@
-package com.oop.library_management.dto;
+package com.oop.library_management.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 

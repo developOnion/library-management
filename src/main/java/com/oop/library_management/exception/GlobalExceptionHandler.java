@@ -6,7 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,5 +77,18 @@ public class GlobalExceptionHandler {
 		error.put("message", ex.getMessage());
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+	}
+
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<Map<String, String>> handleResourceAlreadyException(
+			ResourceAlreadyExistsException ex
+	) {
+
+		Map<String, String> error = new HashMap<>();
+		error.put("timestamp", String.valueOf(LocalDateTime.now()));
+		error.put("status", String.valueOf(HttpStatus.CONFLICT.value()));
+		error.put("message", ex.getMessage());
+
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
 	}
 }

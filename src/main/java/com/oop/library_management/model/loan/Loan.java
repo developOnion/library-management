@@ -1,5 +1,8 @@
-package com.oop.library_management.model;
+package com.oop.library_management.model.loan;
 
+import com.oop.library_management.model.book.Book;
+import com.oop.library_management.model.user.Librarian;
+import com.oop.library_management.model.user.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 

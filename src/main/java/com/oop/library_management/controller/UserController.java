@@ -1,7 +1,7 @@
 package com.oop.library_management.controller;
 
-import com.oop.library_management.dto.UserRequestDTO;
-import com.oop.library_management.dto.UserResponseDTO;
+import com.oop.library_management.dto.user.UserRequestDTO;
+import com.oop.library_management.dto.user.UserResponseDTO;
 
 import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
 import com.oop.library_management.service.UserService;
