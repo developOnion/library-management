@@ -43,3 +43,6 @@ src/main/resources/application.properties
 
 # template (remove .template extension and fill in secrets before use)
 !src/main/resources/application.properties.template
+
+#folder
+src/main/java/com/oop/library_management/cli

@@ -27,4 +27,13 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	List<Book> findByTitleContainingIgnoreCaseAndAvailableCopiesGreaterThan(String title, int availableCopies);
 
 	Optional<Book> findByIsbn(String isbn);
+
+	List<Book> findByAvailableCopiesGreaterThan(int availableCopies);
+
+	List<Book> findAllByOrderByTitleAsc();
+	
+	@Query("""
+					SELECT b FROM Book b ORDER BY b.title asc limit :bookLimit
+		""")
+	List<Book> findAllOrderByTitleLimit(@Param("bookLimit") int bookLimit);
 }
