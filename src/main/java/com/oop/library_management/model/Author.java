@@ -31,7 +31,7 @@ public class Author {
 	@NotNull(message = "Author type is required")
 	private AuthorType type;
 
-	protected Author() {
+	public Author() {
 	}
 
 	public Author(

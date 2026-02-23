@@ -12,12 +12,11 @@ import com.oop.library_management.model.Role;
 import com.oop.library_management.model.User;
 import com.oop.library_management.repository.UserRepository;
 import com.oop.library_management.security.JwtUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
