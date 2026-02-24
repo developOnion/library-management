@@ -2,6 +2,7 @@ package com.oop.library_management.security;
 
 import com.oop.library_management.model.user.User;
 import com.oop.library_management.repository.UserRepository;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
