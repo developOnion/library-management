@@ -1,0 +1,16 @@
+services:
+  mysql:
+    container_name: mysql-library
+    image: mysql:9.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: library
+      MYSQL_USER: onion
+      MYSQL_PASSWORD: ring
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql/data
+    networks:
+      - library-network
+    restart: unless-stopped
