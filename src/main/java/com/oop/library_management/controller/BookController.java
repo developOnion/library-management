@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,10 +23,14 @@ public class BookController {
 		this.bookService = bookService;
 	}
 
-//	@GetMapping("/{id}")
-//	public Book getBookById(@PathVariable Long id) {
-//		return bookService.getBookById(id);
-//	}
+	@GetMapping("/{id}")
+	public ResponseEntity<BookResponseDTO> getBookById(
+			@PathVariable Long id
+	) {
+
+		BookResponseDTO book = bookService.getBookById(id);
+		return ResponseEntity.ok().body(book);
+	}
 
 	@PreAuthorize("hasAuthority('LIBRARIAN')")
 	@PostMapping
@@ -37,5 +42,17 @@ public class BookController {
 		BookResponseDTO createdBook = bookService.createBook(bookRequestDTO);
 
 		return ResponseEntity.ok().body(createdBook);
+	}
+
+	@PreAuthorize("hasAuthority('LIBRARIAN')")
+	@DeleteMapping("{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public ResponseEntity<Void> deleteBook(
+			@PathVariable Long id
+	) {
+
+		bookService.deleteBook(id);
+
+		return ResponseEntity.noContent().build();
 	}
 }

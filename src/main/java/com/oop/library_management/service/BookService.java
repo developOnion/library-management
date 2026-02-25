@@ -4,6 +4,7 @@ import com.oop.library_management.dto.book.BookRequestDTO;
 import com.oop.library_management.dto.book.BookResponseDTO;
 import com.oop.library_management.exception.ResourceAlreadyExistsException;
 import com.oop.library_management.exception.ResourceNotFoundException;
+import com.oop.library_management.exception.ValidationException;
 import com.oop.library_management.mapper.BookMapper;
 import com.oop.library_management.model.author.Author;
 import com.oop.library_management.model.book.Book;
@@ -90,5 +91,31 @@ public class BookService {
 		Book savedBook = bookRepository.save(book);
 
 		return bookMapper.toDTO(savedBook);
+	}
+
+	@Transactional(readOnly = true)
+	public BookResponseDTO getBookById(Long id) {
+
+		if (id == null || id <= 0) {
+			throw new ValidationException("Invalid book ID");
+		}
+
+		Book book = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+
+		return bookMapper.toDTO(book);
+	}
+
+	@Transactional
+	public void deleteBook(Long id) {
+
+		if (id == null || id <= 0) {
+			throw new ValidationException("Invalid book ID");
+		}
+
+		Book book = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+
+		bookRepository.delete(book);
 	}
 }
