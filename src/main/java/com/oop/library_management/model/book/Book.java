@@ -1,5 +1,7 @@
 package com.oop.library_management.model.book;
 
+import com.oop.library_management.model.author.Author;
+import com.oop.library_management.model.category.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -43,16 +45,16 @@ public class Book {
 
 	@Column(name = "total_copies", nullable = false)
 	@Min(value = 1, message = "Total copies must be at least 1")
-	private int totalCopies;
+	private Integer totalCopies;
 
 	@Column(name = "available_copies", nullable = false)
 	@Min(value = 0, message = "Available copies cannot be negative")
-	private int availableCopies;
+	private Integer availableCopies;
 
-	protected Book() {
+	public Book() {
 	}
 
-	public Book(String title, int totalCopies) {
+	public Book(String title, Integer totalCopies) {
 		this.title = title;
 		this.totalCopies = totalCopies;
 		this.availableCopies = totalCopies;
@@ -86,19 +88,19 @@ public class Book {
 		return categories;
 	}
 
-	public int getTotalCopies() {
+	public Integer getTotalCopies() {
 		return totalCopies;
 	}
 
-	public void setTotalCopies(int totalCopies) {
+	public void setTotalCopies(Integer totalCopies) {
 		this.totalCopies = totalCopies;
 	}
 
-	public int getAvailableCopies() {
+	public Integer getAvailableCopies() {
 		return availableCopies;
 	}
 
-	public void setAvailableCopies(int availableCopies) {
+	public void setAvailableCopies(Integer availableCopies) {
 		this.availableCopies = availableCopies;
 	}
 

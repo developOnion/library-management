@@ -1,4 +1,4 @@
-package com.oop.library_management.model.book;
+package com.oop.library_management.model.category;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +17,7 @@ public class Category {
 	@Size(max = 100, message = "Category name must be at most 100 characters")
 	private String name;
 
-	protected Category() {
+	public Category() {
 		// Required by JPA
 	}
 

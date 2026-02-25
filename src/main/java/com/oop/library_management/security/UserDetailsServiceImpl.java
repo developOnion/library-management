@@ -2,24 +2,25 @@ package com.oop.library_management.security;
 
 import com.oop.library_management.model.user.User;
 import com.oop.library_management.repository.UserRepository;
-import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class CustomUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
-	public CustomUserDetailsService(
+	public UserDetailsServiceImpl(
 			UserRepository userRepository
 	) {
 		this.userRepository = userRepository;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 

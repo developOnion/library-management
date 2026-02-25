@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class User {
 
   @Id
@@ -44,8 +49,13 @@ public abstract class User {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @Column(name = "created_at", nullable = false)
+	@CreatedDate
+  @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
+
+	@LastModifiedDate
+	@Column(name = "updated_at", insertable = false)
+	private LocalDateTime updatedAt;
 
   public User() {
     this.createdAt = LocalDateTime.now();
@@ -64,7 +74,6 @@ public abstract class User {
     this.firstName = firstName;
     this.lastName = lastName;
 		this.role = role;
-    this.createdAt = LocalDateTime.now();
   }
 
   public void setId(Long id) {

@@ -5,7 +5,7 @@ import com.oop.library_management.dto.category.CategoryResponseDTO;
 import com.oop.library_management.exception.ResourceAlreadyExistsException;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.mapper.CategoryMapper;
-import com.oop.library_management.model.book.Category;
+import com.oop.library_management.model.category.Category;
 import com.oop.library_management.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

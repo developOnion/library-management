@@ -1,4 +1,4 @@
-package com.oop.library_management.model.book;
+package com.oop.library_management.model.author;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +31,7 @@ public class Author {
 	@NotNull(message = "Author type is required")
 	private AuthorType type;
 
-	public Author() {
+	protected Author() {
 	}
 
 	public Author(
@@ -85,7 +85,7 @@ public class Author {
 	}
 
 	public String getFullName() {
-		return firstName + " " + lastName;
+		return this.fullName;
 	}
 
 	public void setFirstName(String firstName) {

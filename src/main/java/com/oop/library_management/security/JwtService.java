@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtUtil {
+public class JwtService {
 
-	@Value("${jwt.secret}")
+	@Value("${application.security.jwt.secret-key}")
 	private String SECRET_KEY;
 
-	@Value("${jwt.expiration}")
+	@Value("${application.security.jwt.expiration}")
 	private Long EXPIRATION_TIME;
 
 	public String generateToken(String username, Role role) {

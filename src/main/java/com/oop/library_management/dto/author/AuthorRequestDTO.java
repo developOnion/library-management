@@ -1,6 +1,6 @@
 package com.oop.library_management.dto.author;
 
-import com.oop.library_management.model.book.AuthorType;
+import com.oop.library_management.model.author.AuthorType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 

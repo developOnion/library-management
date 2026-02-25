@@ -1,8 +1,8 @@
-package com.oop.library_management.dto.user;
+package com.oop.library_management.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginRequestDTO {
+public class AuthRequestDTO {
 
 	@NotBlank(message = "Username is required")
 	private String username;
@@ -10,7 +10,7 @@ public class LoginRequestDTO {
 	@NotBlank(message = "Password is required")
 	private String password;
 
-	public LoginRequestDTO () {
+	public AuthRequestDTO() {
 	}
 
 	public String getUsername() {

@@ -3,6 +3,7 @@ package com.oop.library_management.controller;
 import com.oop.library_management.dto.category.CategoryRequestDTO;
 import com.oop.library_management.dto.category.CategoryResponseDTO;
 import com.oop.library_management.service.CategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
+@Tag(name = "Category Management", description = "Endpoints for managing book categories in the library")
 public class CategoryController {
 
 	private final CategoryService categoryService;

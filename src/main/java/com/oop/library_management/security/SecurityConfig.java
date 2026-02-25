@@ -6,30 +6,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
 	private final JwtFilter JwtFilter;
-	private final CustomUserDetailsService userDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 
 	public SecurityConfig(
 			JwtFilter jwtFilter,
-			CustomUserDetailsService userDetailsService
+			UserDetailsServiceImpl userDetailsService
 	) {
 
 		this.JwtFilter = jwtFilter;
@@ -42,9 +44,15 @@ public class SecurityConfig {
 	) {
 
 		return httpSecurity
+				.cors(withDefaults())
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers(
+								"/auth/**",
+								"/v3/api-docs/**",
+								"/swagger-ui/**",
+								"/swagger-ui.html"
+						).permitAll()
 						.anyRequest().authenticated()
 				)
 				.exceptionHandling(exception -> exception
@@ -60,8 +68,9 @@ public class SecurityConfig {
 				)
 				.sessionManagement(
 						session -> session
-								.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+								.sessionCreationPolicy(STATELESS)
 				)
+				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(JwtFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
@@ -72,7 +81,7 @@ public class SecurityConfig {
 		DaoAuthenticationProvider provider =
 				new DaoAuthenticationProvider(userDetailsService);
 
-		provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+		provider.setPasswordEncoder(passwordEncoder());
 
 		return provider;
 	}
@@ -82,5 +91,10 @@ public class SecurityConfig {
 			AuthenticationConfiguration config
 	) {
 		return config.getAuthenticationManager();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(12);
 	}
 }

@@ -1,7 +1,7 @@
 package com.oop.library_management.mapper;
 
 import com.oop.library_management.dto.category.CategoryResponseDTO;
-import com.oop.library_management.model.book.Category;
+import com.oop.library_management.model.category.Category;
 import org.springframework.stereotype.Component;
 
 @Component

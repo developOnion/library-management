@@ -1,7 +1,7 @@
 package com.oop.library_management.mapper;
 
 import com.oop.library_management.dto.author.AuthorResponseDTO;
-import com.oop.library_management.model.book.Author;
+import com.oop.library_management.model.author.Author;
 import org.springframework.stereotype.Component;
 
 @Component
