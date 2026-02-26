@@ -1,6 +1,7 @@
 package com.oop.library_management.model.book;
 
 import com.oop.library_management.model.author.Author;
+import com.oop.library_management.model.base.BaseEntity;
 import com.oop.library_management.model.category.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -12,11 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "books")
-public class Book {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Book extends BaseEntity {
 
 	@Column(nullable = false)
 	@NotBlank(message = "Title is required")
@@ -60,10 +57,6 @@ public class Book {
 		this.availableCopies = totalCopies;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -104,7 +97,6 @@ public class Book {
 		this.availableCopies = availableCopies;
 	}
 
-	// helper methods
 	public void addAuthor(Author author) {
 		authors.add(author);
 	}

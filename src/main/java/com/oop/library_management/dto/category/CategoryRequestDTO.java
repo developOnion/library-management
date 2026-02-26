@@ -2,19 +2,8 @@ package com.oop.library_management.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CategoryRequestDTO {
-
-	@NotBlank(message = "Category name is required")
-	private String name;
-
-	public CategoryRequestDTO() {
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+public record CategoryRequestDTO(
+		@NotBlank(message = "Category name is required")
+		String name
+) {
 }

@@ -1,5 +1,6 @@
 package com.oop.library_management.model.user;
 
+import com.oop.library_management.model.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,11 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class User {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public abstract class User extends BaseEntity {
 
   @Column(nullable = false, unique = true, length = 30)
   @NotBlank(message = "Username is required")
@@ -49,16 +46,7 @@ public abstract class User {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-	@CreatedDate
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	@Column(name = "updated_at", insertable = false)
-	private LocalDateTime updatedAt;
-
   public User() {
-    this.createdAt = LocalDateTime.now();
   }
 
   public User(
@@ -74,14 +62,6 @@ public abstract class User {
     this.firstName = firstName;
     this.lastName = lastName;
 		this.role = role;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return id;
   }
 
   public String getUsername() {
@@ -122,10 +102,6 @@ public abstract class User {
 
   public void setLastLogin(LocalDateTime lastLogin) {
     this.lastLogin = lastLogin;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
   }
 
   public String getFullName() {

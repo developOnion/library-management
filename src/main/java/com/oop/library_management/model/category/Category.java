@@ -1,16 +1,13 @@
 package com.oop.library_management.model.category;
 
+import com.oop.library_management.model.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
-public class Category {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Category extends BaseEntity {
 
 	@Column(nullable = false, unique = true, length = 100)
 	@NotBlank(message = "Category name is required")
@@ -23,14 +20,6 @@ public class Category {
 
 	public Category(String name) {
 		this.name = name;
-	}
-
-	public Category(String name, String description) {
-		this.name = name;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public String getName() {

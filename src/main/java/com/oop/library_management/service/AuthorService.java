@@ -45,9 +45,9 @@ public class AuthorService {
 	) {
 
 		Author author = new Author(
-				authorRequestDTO.getFirstName(),
-				authorRequestDTO.getLastName(),
-				authorRequestDTO.getType()
+				authorRequestDTO.firstName(),
+				authorRequestDTO.lastName(),
+				authorRequestDTO.type()
 		);
 
 		Author savedAuthor = authorRepository.save(author);

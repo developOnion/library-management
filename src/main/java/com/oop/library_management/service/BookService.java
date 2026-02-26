@@ -45,45 +45,45 @@ public class BookService {
 	) {
 
 		if (
-				bookRequest.getIsbn() != null &&
-				bookRepository.existsByIsbn(bookRequest.getIsbn())
+				bookRequest.isbn() != null &&
+				bookRepository.existsByIsbn(bookRequest.isbn())
 		) {
 			throw new ResourceAlreadyExistsException("Book already exists");
 		}
 
 		if (
-				bookRequest.getIsbn() == null &&
+				bookRequest.isbn() == null &&
 				bookRepository.existsNullIsbnWithExactAuthors(
-						bookRequest.getAuthorIds(),
-						bookRequest.getAuthorIds().size()
+						bookRequest.authorIds(),
+						bookRequest.authorIds().size()
 				)
 		) {
 			throw new ResourceAlreadyExistsException("Book already exists");
 		}
 
 		Book book = new Book(
-				bookRequest.getTitle(),
-				bookRequest.getTotalCopies()
+				bookRequest.title(),
+				bookRequest.totalCopies()
 		);
 
-		book.setIsbn(bookRequest.getIsbn());
+		book.setIsbn(bookRequest.isbn());
 
 		Set<Author> authors =
 				new HashSet<>(
-						authorRepository.findAllById(bookRequest.getAuthorIds())
+						authorRepository.findAllById(bookRequest.authorIds())
 				);
 
-		if (authors.size() != bookRequest.getAuthorIds().size()) {
+		if (authors.size() != bookRequest.authorIds().size()) {
 			throw new ResourceNotFoundException("One or more authors not found");
 		}
 		authors.forEach(book::addAuthor);
 
 		Set<Category> categories =
 				new HashSet<>(
-						categoryRepository.findAllById(bookRequest.getCategoryIds())
+						categoryRepository.findAllById(bookRequest.categoryIds())
 				);
 
-		if (categories.size() != bookRequest.getCategoryIds().size()) {
+		if (categories.size() != bookRequest.categoryIds().size()) {
 			throw new ResourceNotFoundException("One or more categories not found");
 		}
 		categories.forEach(book::addCategory);

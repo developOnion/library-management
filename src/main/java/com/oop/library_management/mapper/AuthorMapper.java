@@ -12,13 +12,12 @@ public class AuthorMapper {
 			return null;
 		}
 
-		AuthorResponseDTO dto = new AuthorResponseDTO();
-		dto.setId(author.getId());
-		dto.setFullName(author.getFullName());
-		dto.setFirstName(author.getFirstName());
-		dto.setLastName(author.getLastName());
-		dto.setType(author.getType());
-
-		return dto;
+		return new AuthorResponseDTO(
+				author.getId(),
+				author.getFullName(),
+				author.getFirstName(),
+				author.getLastName(),
+				author.getType()
+		);
 	}
 }

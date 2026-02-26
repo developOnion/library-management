@@ -13,10 +13,9 @@ public class CategoryMapper {
 			return null;
 		}
 
-		CategoryResponseDTO dto = new CategoryResponseDTO();
-		dto.setId(category.getId());
-		dto.setName(category.getName());
-
-		return dto;
+		return new CategoryResponseDTO(
+				category.getId(),
+				category.getName()
+		);
 	}
 }

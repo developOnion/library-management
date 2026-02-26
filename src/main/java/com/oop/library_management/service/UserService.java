@@ -49,10 +49,10 @@ public class UserService {
 		validateUserRequest(request);
 
 		User user = new Member(
-				request.getUsername(),
-				passwordEncoder.encode(request.getPassword()),
-				request.getFirstName(),
-				request.getLastName(),
+				request.username(),
+				passwordEncoder.encode(request.password()),
+				request.firstName(),
+				request.lastName(),
 				Role.MEMBER
 		);
 
@@ -67,12 +67,12 @@ public class UserService {
 		validateLibrarianRequest(userDTO);
 
 		User user = new Librarian(
-				userDTO.getUsername(),
-				passwordEncoder.encode(userDTO.getPassword()),
-				userDTO.getFirstName(),
-				userDTO.getLastName(),
+				userDTO.username(),
+				passwordEncoder.encode(userDTO.password()),
+				userDTO.firstName(),
+				userDTO.lastName(),
 				Role.LIBRARIAN,
-				userDTO.getPosition()
+				userDTO.position()
 		);
 
 		User savedUser = userRepository.save(user);
@@ -86,14 +86,14 @@ public class UserService {
 		try {
 			// Authenticate user credentials
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-					loginRequest.getUsername(),
-					loginRequest.getPassword()
+					loginRequest.username(),
+					loginRequest.password()
 			);
 
 			authManager.authenticate(authToken);
 
 			// Fetch user from database to get the role
-			User user = userRepository.findByUsername(loginRequest.getUsername())
+			User user = userRepository.findByUsername(loginRequest.username())
 					.orElseThrow(() -> new AuthenticationException("User not found"));
 
 			// Update last login
@@ -131,23 +131,23 @@ public class UserService {
 
 		validateUserRequest(userDTO);
 
-		if (userDTO.getPosition() == null) {
+		if (userDTO.position() == null) {
 			throw new ValidationException("Librarian position is required");
 		}
 	}
 
 	private void validateUserRequest(UserRequestDTO userDTO) {
 
-		if (userRepository.existsByUsername(userDTO.getUsername())) {
+		if (userRepository.existsByUsername(userDTO.username())) {
 			throw new ValidationException("Username already exists");
 		}
 
-		if (!isValidUsername(userDTO.getUsername())) {
+		if (!isValidUsername(userDTO.username())) {
 			throw new ValidationException(
 					"Username must be 3-30 characters long and contain only letters and numbers");
 		}
 
-		if (!isValidPassword(userDTO.getPassword())) {
+		if (!isValidPassword(userDTO.password())) {
 			throw new ValidationException(
 					"Password must contain at least one number and one character");
 		}

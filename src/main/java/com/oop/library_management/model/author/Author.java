@@ -1,17 +1,16 @@
 package com.oop.library_management.model.author;
 
+import com.oop.library_management.model.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "authors")
-public class Author {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Author extends BaseEntity {
 
 	@Column(name = "full_name", nullable = false, length = 100)
 	@NotBlank(message = "Full name is required")
@@ -31,7 +30,7 @@ public class Author {
 	@NotNull(message = "Author type is required")
 	private AuthorType type;
 
-	protected Author() {
+	public Author() {
 	}
 
 	public Author(
@@ -56,10 +55,6 @@ public class Author {
 		this.type = type;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
@@ -70,10 +65,6 @@ public class Author {
 
 	public void setType(AuthorType type) {
 		this.type = type;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public String getFirstName() {

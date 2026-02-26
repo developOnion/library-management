@@ -27,23 +27,18 @@ public class BookMapper {
 			return null;
 		}
 
-		BookResponseDTO dto = new BookResponseDTO();
-		dto.setId(book.getId());
-		dto.setTitle(book.getTitle());
-		dto.setIsbn(book.getIsbn());
-		dto.setTotalCopies(book.getTotalCopies());
-		dto.setAvailableCopies(book.getAvailableCopies());
-		dto.getAuthors().addAll(
+		return new BookResponseDTO(
+				book.getId(),
+				book.getTitle(),
+				book.getIsbn(),
+				book.getTotalCopies(),
+				book.getAvailableCopies(),
 				book.getAuthors().stream()
 						.map(authorMapper::toDTO)
-						.toList()
-		);
-		dto.getCategories().addAll(
+						.toList(),
 				book.getCategories().stream()
 						.map(categoryMapper::toDTO)
 						.toList()
 		);
-
-		return dto;
 	}
 }

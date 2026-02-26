@@ -47,13 +47,13 @@ public class CategoryService {
 
 		if (
 				categoryRepository
-				.existsByNameIgnoreCase(categoryRequestDTO.getName())
+				.existsByNameIgnoreCase(categoryRequestDTO.name())
 		) {
 
 			throw new ResourceAlreadyExistsException("Category already exists");
 		}
 
-		Category category = new Category(categoryRequestDTO.getName());
+		Category category = new Category(categoryRequestDTO.name());
 		Category savedCategory = categoryRepository.save(category);
 
 		return categoryMapper.toDTO(savedCategory);
