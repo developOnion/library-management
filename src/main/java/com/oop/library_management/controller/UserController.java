@@ -3,7 +3,7 @@ package com.oop.library_management.controller;
 import com.oop.library_management.dto.user.UserRequestDTO;
 import com.oop.library_management.dto.user.UserResponseDTO;
 
-import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
+import com.oop.library_management.validation.validationgroup.CreateLibrarianValidation;
 import com.oop.library_management.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
