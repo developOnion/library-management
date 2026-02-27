@@ -5,7 +5,12 @@ import com.oop.library_management.dto.author.AuthorResponseDTO;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.mapper.AuthorMapper;
 import com.oop.library_management.model.author.Author;
+import com.oop.library_management.model.common.PageResponse;
 import com.oop.library_management.repository.AuthorRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,17 +31,43 @@ public class AuthorService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AuthorResponseDTO> searchAuthorsByName(
-			String name
+	public PageResponse<AuthorResponseDTO> searchAuthorsByName(
+			String name, int page, int size
 	) {
 
 		if (name == null || name.trim().isEmpty()) {
-			return List.of();
+			return new PageResponse<>(
+					List.of(),
+					page,
+					size,
+					0L,
+					0,
+					true,
+					true
+			);
 		}
 
-		return authorRepository.findByFullNameContainingIgnoreCase(name).stream()
+		Pageable pageable = PageRequest.of(
+				page,
+				size,
+				Sort.by("lastName").ascending()
+						.and(Sort.by("firstName").ascending())
+		);
+
+		Page<Author> authors = authorRepository.findAllByFullNameContainingIgnoreCase(name, pageable);
+		List<AuthorResponseDTO> authorResponseDTOS = authors.stream()
 				.map(authorMapper::toDTO)
 				.toList();
+
+		return new PageResponse<>(
+				authorResponseDTOS,
+				page,
+				size,
+				authors.getTotalElements(),
+				authors.getTotalPages(),
+				authors.isFirst(),
+				authors.isLast()
+		);
 	}
 
 	@Transactional

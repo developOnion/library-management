@@ -1,6 +1,6 @@
 package com.oop.library_management.model.category;
 
-import com.oop.library_management.model.base.BaseEntity;
+import com.oop.library_management.model.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

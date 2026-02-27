@@ -1,7 +1,7 @@
 package com.oop.library_management.model.book;
 
 import com.oop.library_management.model.author.Author;
-import com.oop.library_management.model.base.BaseEntity;
+import com.oop.library_management.model.common.BaseEntity;
 import com.oop.library_management.model.category.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;

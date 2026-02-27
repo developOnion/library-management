@@ -1,4 +1,4 @@
-package com.oop.library_management.model.base;
+package com.oop.library_management.model.common;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;

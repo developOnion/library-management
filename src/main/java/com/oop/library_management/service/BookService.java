@@ -9,13 +9,19 @@ import com.oop.library_management.mapper.BookMapper;
 import com.oop.library_management.model.author.Author;
 import com.oop.library_management.model.book.Book;
 import com.oop.library_management.model.category.Category;
+import com.oop.library_management.model.common.PageResponse;
 import com.oop.library_management.repository.AuthorRepository;
 import com.oop.library_management.repository.BookRepository;
 import com.oop.library_management.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -39,6 +45,47 @@ public class BookService {
 		this.bookMapper = bookMapper;
 	}
 
+	@Transactional(readOnly = true)
+	public BookResponseDTO getBookById(Long id) {
+
+		if (id == null || id <= 0) {
+			throw new ValidationException("Invalid book ID");
+		}
+
+		Book book = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+
+		return bookMapper.toDTO(book);
+	}
+
+	@Transactional(readOnly = true)
+	public PageResponse<BookResponseDTO> findAllBooks(
+			int page,
+			int size
+	) {
+
+		Pageable pageable = PageRequest.of(
+				page,
+				size,
+				Sort.by("createdAt").descending()
+		);
+
+		Page<Book> books = bookRepository.findAll(pageable);
+		List<BookResponseDTO> bookResponseDTOs = books.stream()
+				.map(bookMapper::toDTO)
+				.toList();
+
+		return new PageResponse<>(
+				bookResponseDTOs,
+				books.getNumber(),
+				books.getSize(),
+				books.getTotalElements(),
+				books.getTotalPages(),
+				books.isFirst(),
+				books.isLast()
+		);
+	}
+
 	@Transactional
 	public BookResponseDTO createBook(
 			BookRequestDTO bookRequest
@@ -46,17 +93,17 @@ public class BookService {
 
 		if (
 				bookRequest.isbn() != null &&
-				bookRepository.existsByIsbn(bookRequest.isbn())
+						bookRepository.existsByIsbn(bookRequest.isbn())
 		) {
 			throw new ResourceAlreadyExistsException("Book already exists");
 		}
 
 		if (
 				bookRequest.isbn() == null &&
-				bookRepository.existsNullIsbnWithExactAuthors(
-						bookRequest.authorIds(),
-						bookRequest.authorIds().size()
-				)
+						bookRepository.existsNullIsbnWithExactAuthors(
+								bookRequest.authorIds(),
+								bookRequest.authorIds().size()
+						)
 		) {
 			throw new ResourceAlreadyExistsException("Book already exists");
 		}
@@ -91,19 +138,6 @@ public class BookService {
 		Book savedBook = bookRepository.save(book);
 
 		return bookMapper.toDTO(savedBook);
-	}
-
-	@Transactional(readOnly = true)
-	public BookResponseDTO getBookById(Long id) {
-
-		if (id == null || id <= 0) {
-			throw new ValidationException("Invalid book ID");
-		}
-
-		Book book = bookRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));
-
-		return bookMapper.toDTO(book);
 	}
 
 	@Transactional

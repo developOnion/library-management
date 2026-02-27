@@ -1,12 +1,10 @@
 package com.oop.library_management.model.author;
 
-import com.oop.library_management.model.base.BaseEntity;
+import com.oop.library_management.model.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "authors")
@@ -48,8 +46,6 @@ public class Author extends BaseEntity {
 			this.fullName = firstName;
 		} else if (lastName != null) {
 			this.fullName = lastName;
-		} else {
-			this.fullName = "Unknown Author";
 		}
 
 		this.type = type;
