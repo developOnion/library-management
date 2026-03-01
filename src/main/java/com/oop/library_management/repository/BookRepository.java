@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -23,41 +22,55 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 			""")
 	List<Book> findByAuthorFullName(@Param("fullName") String fullName);
 
-	List<Book> findByCategories_NameIgnoreCase(String categoryName);
-
-	List<Book> findByTitleContainingIgnoreCaseAndAvailableCopiesGreaterThan(String title, int availableCopies);
-
-	Optional<Book> findByIsbn(String isbn);
-
-	List<Book> findByAvailableCopiesGreaterThan(int availableCopies);
-
-	List<Book> findAllByOrderByTitleAsc();
-
 	@Query("""
-						SELECT b FROM Book b ORDER BY b.title ASC LIMIT :bookLimit
+			SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
+			FROM Book b
+			WHERE b.isbn IS NULL
+			AND LOWER(b.title) = LOWER(:title)
+			AND SIZE(b.authors) = :authorCount
+			AND NOT EXISTS (
+			    SELECT 1 FROM Author a
+			    WHERE a MEMBER OF b.authors
+			    AND a.id NOT IN :authorIds
+			)
+			AND NOT EXISTS (
+			    SELECT 1 FROM Author a
+			    WHERE a.id IN :authorIds
+			    AND a NOT MEMBER OF b.authors
+			)
 			""")
-	List<Book> findAllOrderByTitleLimit(@Param("bookLimit") int bookLimit);
-
-	@Query("""
-    SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
-    FROM Book b
-    WHERE b.isbn IS NULL
-    AND SIZE(b.authors) = :authorCount
-    AND NOT EXISTS (
-        SELECT 1 FROM Author a
-        WHERE a MEMBER OF b.authors
-        AND a.id NOT IN :authorIds
-    )
-    AND NOT EXISTS (
-        SELECT 1 FROM Author a
-        WHERE a.id IN :authorIds
-        AND a NOT MEMBER OF b.authors
-    )
-    """)
-	boolean existsNullIsbnWithExactAuthors(
+	boolean existsNullIsbnWithTitleAndExactAuthors(
+			@Param("title") String title,
 			@Param("authorIds") Set<Long> authorIds,
 			@Param("authorCount") Integer authorCount
 	);
 
+	@Query("""
+			SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
+			FROM Book b
+			WHERE b.isbn IS NULL
+			AND LOWER(b.title) = LOWER(:title)
+			AND SIZE(b.authors) = :authorCount
+			AND b.id != :excludeId
+			AND NOT EXISTS (
+			    SELECT 1 FROM Author a
+			    WHERE a MEMBER OF b.authors
+			    AND a.id NOT IN :authorIds
+			)
+			AND NOT EXISTS (
+			    SELECT 1 FROM Author a
+			    WHERE a.id IN :authorIds
+			    AND a NOT MEMBER OF b.authors
+			)
+			""")
+	boolean existsNullIsbnWithTitleAndExactAuthorsAndIdNot(
+			@Param("title") String title,
+			@Param("authorIds") Set<Long> authorIds,
+			@Param("authorCount") Integer authorCount,
+			@Param("excludeId") Long excludeId
+	);
+
 	boolean existsByIsbn(String isbn);
+
+	boolean existsByIsbnAndIdNot(String isbn, Long id);
 }

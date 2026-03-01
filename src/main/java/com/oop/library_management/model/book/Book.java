@@ -1,8 +1,8 @@
 package com.oop.library_management.model.book;
 
 import com.oop.library_management.model.author.Author;
-import com.oop.library_management.model.common.BaseEntity;
 import com.oop.library_management.model.category.Category;
+import com.oop.library_management.model.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,7 +30,7 @@ public class Book extends BaseEntity {
 			joinColumns = @JoinColumn(name = "book_id"),
 			inverseJoinColumns = @JoinColumn(name = "author_id")
 	)
-	private final Set<Author> authors = new HashSet<>();
+	private Set<Author> authors = new HashSet<>();
 
 	@ManyToMany
 	@JoinTable(
@@ -38,7 +38,7 @@ public class Book extends BaseEntity {
 			joinColumns = @JoinColumn(name = "book_id"),
 			inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
-	private final Set<Category> categories = new HashSet<>();
+	private Set<Category> categories = new HashSet<>();
 
 	@Column(name = "total_copies", nullable = false)
 	@Min(value = 1, message = "Total copies must be at least 1")
@@ -48,6 +48,9 @@ public class Book extends BaseEntity {
 	@Min(value = 0, message = "Available copies cannot be negative")
 	private Integer availableCopies;
 
+	@Version
+	private Long version;
+
 	public Book() {
 	}
 
@@ -55,6 +58,14 @@ public class Book extends BaseEntity {
 		this.title = title;
 		this.totalCopies = totalCopies;
 		this.availableCopies = totalCopies;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	public String getTitle() {
@@ -77,8 +88,16 @@ public class Book extends BaseEntity {
 		return authors;
 	}
 
+	public void setAuthors(Set<Author> authors) {
+		this.authors = authors;
+	}
+
 	public Set<Category> getCategories() {
 		return categories;
+	}
+
+	public void setCategories(Set<Category> categories) {
+		this.categories = categories;
 	}
 
 	public Integer getTotalCopies() {

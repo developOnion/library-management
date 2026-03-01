@@ -2,6 +2,7 @@ package com.oop.library_management.service;
 
 import com.oop.library_management.dto.author.AuthorRequestDTO;
 import com.oop.library_management.dto.author.AuthorResponseDTO;
+import com.oop.library_management.exception.ResourceAlreadyExistsException;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.mapper.AuthorMapper;
 import com.oop.library_management.model.author.Author;
@@ -61,8 +62,8 @@ public class AuthorService {
 
 		return new PageResponse<>(
 				authorResponseDTOS,
-				page,
-				size,
+				authors.getNumber(),
+				authors.getSize(),
 				authors.getTotalElements(),
 				authors.getTotalPages(),
 				authors.isFirst(),
@@ -70,10 +71,28 @@ public class AuthorService {
 		);
 	}
 
+	@Transactional(readOnly = true)
+	public AuthorResponseDTO getAuthorById(Long id) {
+
+		return authorRepository.findById(id)
+				.map(authorMapper::toDTO)
+				.orElseThrow(() -> new ResourceNotFoundException("Author not found"));
+	}
+
 	@Transactional
 	public AuthorResponseDTO createAuthor(
 			AuthorRequestDTO authorRequestDTO
 	) {
+
+		if (
+				authorRepository
+						.existsByFullNameIgnoreCase(
+								authorRequestDTO.firstName() + " " + authorRequestDTO.lastName()
+						)
+		) {
+
+			throw new ResourceAlreadyExistsException("Author already exists");
+		}
 
 		Author author = new Author(
 				authorRequestDTO.firstName(),
@@ -84,13 +103,5 @@ public class AuthorService {
 		Author savedAuthor = authorRepository.save(author);
 
 		return authorMapper.toDTO(savedAuthor);
-	}
-
-	@Transactional(readOnly = true)
-	public AuthorResponseDTO getAuthorById(Long id) {
-
-		return authorRepository.findById(id)
-				.map(authorMapper::toDTO)
-				.orElseThrow(() -> new ResourceNotFoundException("Author not found"));
 	}
 }

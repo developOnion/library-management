@@ -6,6 +6,8 @@ import com.oop.library_management.model.common.PageResponse;
 import com.oop.library_management.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +26,7 @@ public class BookController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<BookResponseDTO> getBookById(
-			@PathVariable Long id
+			@PathVariable @Min(1) Long id
 	) {
 
 		BookResponseDTO book = bookService.getBookById(id);
@@ -33,8 +35,8 @@ public class BookController {
 
 	@GetMapping
 	public ResponseEntity<PageResponse<BookResponseDTO>> findAllBooks(
-			@RequestParam(name = "page", defaultValue = "0", required = false) int page,
-			@RequestParam(name = "size", defaultValue = "10", required = false) int size
+			@RequestParam(name = "page", defaultValue = "0", required = false) @Min(0) int page,
+			@RequestParam(name = "size", defaultValue = "10", required = false) @Min(1) @Max(100) int size
 	) {
 
 		PageResponse<BookResponseDTO> books = bookService.findAllBooks(page, size);
@@ -45,7 +47,7 @@ public class BookController {
 	@PreAuthorize("hasAuthority('LIBRARIAN')")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<BookResponseDTO> addBook(
+	public ResponseEntity<BookResponseDTO> createBook(
 			@Valid @RequestBody BookRequestDTO bookRequestDTO
 	) {
 
@@ -58,11 +60,23 @@ public class BookController {
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Void> deleteBook(
-			@PathVariable Long id
+			@PathVariable @Min(1) Long id
 	) {
 
 		bookService.deleteBook(id);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@PreAuthorize("hasAuthority('LIBRARIAN')")
+	@PutMapping("{id}")
+	public ResponseEntity<BookResponseDTO> updateBook(
+			@PathVariable @Min(1) Long id,
+			@Valid @RequestBody BookRequestDTO bookRequestDTO
+	) {
+
+		BookResponseDTO updatedBook = bookService.updateBook(id, bookRequestDTO);
+
+		return ResponseEntity.ok().body(updatedBook);
 	}
 }

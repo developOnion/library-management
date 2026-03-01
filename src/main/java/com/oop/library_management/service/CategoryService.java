@@ -64,8 +64,8 @@ public class CategoryService {
 
 		return new PageResponse<>(
 				categoryResponseDTOS,
-				page,
-				size,
+				categories.getNumber(),
+				categories.getSize(),
 				categories.getTotalElements(),
 				categories.getTotalPages(),
 				categories.isFirst(),

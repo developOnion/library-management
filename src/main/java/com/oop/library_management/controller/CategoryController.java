@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +48,8 @@ public class CategoryController {
 	 * Results are paginated according to the specified page and size parameters.
 	 * </p>
 	 *
-	 * @param page the zero-based page number (default: 0)
-	 * @param size the number of items per page (default: 10)
+	 * @param page the zero-based page number (default: 0) (min: 0)
+	 * @param size the number of items per page (default: 10) (min: 1, max: 100)
 	 * @param name the search term for category name (optional, partial match)
 	 * @return paginated response containing matching categories
 	 */
@@ -67,9 +69,9 @@ public class CategoryController {
 	@GetMapping
 	public ResponseEntity<PageResponse<CategoryResponseDTO>> searchCategoriesByName(
 			@Parameter(description = "Page number (0-indexed)", example = "0")
-			@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+			@RequestParam(name = "page", defaultValue = "0", required = false) @Min(0) int page,
 			@Parameter(description = "Number of items per page", example = "10")
-			@RequestParam(name = "size", defaultValue = "10", required = false) int size,
+			@RequestParam(name = "size", defaultValue = "10", required = false) @Min(1) @Max(100) int size,
 			@Parameter(description = "Category name to search for (partial match, case-insensitive)", example = "Fiction")
 			@RequestParam(required = false) String name
 	) {
@@ -113,7 +115,7 @@ public class CategoryController {
 	@GetMapping("/{id}")
 	public ResponseEntity<CategoryResponseDTO> getCategoryById(
 			@Parameter(description = "Category ID", example = "1", required = true)
-			@PathVariable Long id
+			@PathVariable @Min(1) Long id
 	) {
 
 		CategoryResponseDTO category =

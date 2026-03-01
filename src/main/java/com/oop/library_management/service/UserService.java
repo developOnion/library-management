@@ -5,7 +5,7 @@ import com.oop.library_management.dto.auth.AuthResponseDTO;
 import com.oop.library_management.dto.user.UserRequestDTO;
 import com.oop.library_management.dto.user.UserResponseDTO;
 import com.oop.library_management.exception.AuthenticationException;
-import com.oop.library_management.exception.ValidationException;
+import com.oop.library_management.exception.InvalidUserDataException;
 import com.oop.library_management.mapper.UserMapper;
 import com.oop.library_management.model.user.Librarian;
 import com.oop.library_management.model.user.Member;
@@ -132,23 +132,23 @@ public class UserService {
 		validateUserRequest(userDTO);
 
 		if (userDTO.position() == null) {
-			throw new ValidationException("Librarian position is required");
+			throw new InvalidUserDataException("Librarian position is required");
 		}
 	}
 
 	private void validateUserRequest(UserRequestDTO userDTO) {
 
 		if (userRepository.existsByUsername(userDTO.username())) {
-			throw new ValidationException("Username already exists");
+			throw new InvalidUserDataException("Username already exists");
 		}
 
 		if (!isValidUsername(userDTO.username())) {
-			throw new ValidationException(
+			throw new InvalidUserDataException(
 					"Username must be 3-30 characters long and contain only letters and numbers");
 		}
 
 		if (!isValidPassword(userDTO.password())) {
-			throw new ValidationException(
+			throw new InvalidUserDataException(
 					"Password must contain at least one number and one character");
 		}
 	}

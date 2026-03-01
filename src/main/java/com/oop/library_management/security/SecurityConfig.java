@@ -57,6 +57,11 @@ public class SecurityConfig {
 				)
 				.exceptionHandling(exception -> exception
 						.accessDeniedHandler((request, response, accessDeniedException) -> {
+							System.err.println("--- ACCESS DENIED ---");
+							System.err.println("Request URI: " + request.getRequestURI());
+							System.err.println("Exception: " + accessDeniedException.getMessage());
+							accessDeniedException.printStackTrace();
+
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.setContentType("application/json");
 							response.getWriter().write(
