@@ -6,7 +6,12 @@ import com.oop.library_management.exception.ResourceAlreadyExistsException;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.mapper.CategoryMapper;
 import com.oop.library_management.model.category.Category;
+import com.oop.library_management.model.common.PageResponse;
 import com.oop.library_management.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,17 +32,45 @@ public class CategoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<CategoryResponseDTO> searchCategoriesByName(
+	public PageResponse<CategoryResponseDTO> searchCategoriesByName(
+			int page,
+			int size,
 			String name
 	) {
 
 		if (name == null || name.isEmpty()) {
-			return List.of();
+			return new PageResponse<>(
+					List.of(),
+					page,
+					size,
+					0L,
+					0,
+					true,
+					true
+			);
 		}
 
-		return categoryRepository.findByNameContainingIgnoreCase(name).stream()
+		Pageable pageable = PageRequest.of(
+				page,
+				size,
+				Sort.by("createdAt").descending()
+						.and(Sort.by("name").ascending())
+		);
+
+		Page<Category> categories = categoryRepository.findAllByNameContainingIgnoreCase(name, pageable);
+		List<CategoryResponseDTO> categoryResponseDTOS = categories.stream()
 				.map(categoryMapper::toDTO)
 				.toList();
+
+		return new PageResponse<>(
+				categoryResponseDTOS,
+				page,
+				size,
+				categories.getTotalElements(),
+				categories.getTotalPages(),
+				categories.isFirst(),
+				categories.isLast()
+		);
 	}
 
 	@Transactional
@@ -47,7 +80,7 @@ public class CategoryService {
 
 		if (
 				categoryRepository
-				.existsByNameIgnoreCase(categoryRequestDTO.name())
+						.existsByNameIgnoreCase(categoryRequestDTO.name())
 		) {
 
 			throw new ResourceAlreadyExistsException("Category already exists");

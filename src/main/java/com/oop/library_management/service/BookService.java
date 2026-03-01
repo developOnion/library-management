@@ -68,6 +68,7 @@ public class BookService {
 				page,
 				size,
 				Sort.by("createdAt").descending()
+						.and(Sort.by("title").ascending())
 		);
 
 		Page<Book> books = bookRepository.findAll(pageable);
