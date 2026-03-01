@@ -18,37 +18,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class BookService {
+public class BookService implements CrudService<BookRequestDTO, BookResponseDTO> {
 
 	private final BookRepository bookRepository;
 	private final AuthorRepository authorRepository;
 	private final CategoryRepository categoryRepository;
 	private final BookMapper bookMapper;
-	private final CorsConfigurationSource corsConfigurationSource;
 
 	public BookService(
 			BookRepository bookRepository,
 			AuthorRepository authorRepository,
 			CategoryRepository categoryRepository,
-			BookMapper bookMapper,
-			CorsConfigurationSource corsConfigurationSource) {
+			BookMapper bookMapper
+	) {
 
 		this.bookRepository = bookRepository;
 		this.authorRepository = authorRepository;
 		this.categoryRepository = categoryRepository;
 		this.bookMapper = bookMapper;
-		this.corsConfigurationSource = corsConfigurationSource;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public BookResponseDTO getBookById(Long id) {
+	public BookResponseDTO getById(Long id) {
 
 		Book book = bookRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));
@@ -85,8 +83,9 @@ public class BookService {
 		);
 	}
 
+	@Override
 	@Transactional
-	public BookResponseDTO createBook(
+	public BookResponseDTO create(
 			BookRequestDTO bookRequest
 	) {
 
@@ -124,8 +123,9 @@ public class BookService {
 		return bookMapper.toDTO(savedBook);
 	}
 
+	@Override
 	@Transactional
-	public BookResponseDTO updateBook(
+	public BookResponseDTO update(
 			Long id,
 			BookRequestDTO bookRequestDTO
 	) {
@@ -170,8 +170,9 @@ public class BookService {
 		return bookMapper.toDTO(updatedBook);
 	}
 
+	@Override
 	@Transactional
-	public void deleteBook(Long id) {
+	public void delete(Long id) {
 
 		Book book = bookRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Book not found"));

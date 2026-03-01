@@ -29,7 +29,7 @@ public class BookController {
 			@PathVariable @Min(1) Long id
 	) {
 
-		BookResponseDTO book = bookService.getBookById(id);
+		BookResponseDTO book = bookService.getById(id);
 		return ResponseEntity.ok().body(book);
 	}
 
@@ -51,7 +51,7 @@ public class BookController {
 			@Valid @RequestBody BookRequestDTO bookRequestDTO
 	) {
 
-		BookResponseDTO createdBook = bookService.createBook(bookRequestDTO);
+		BookResponseDTO createdBook = bookService.create(bookRequestDTO);
 
 		return ResponseEntity.ok().body(createdBook);
 	}
@@ -63,7 +63,7 @@ public class BookController {
 			@PathVariable @Min(1) Long id
 	) {
 
-		bookService.deleteBook(id);
+		bookService.delete(id);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -75,7 +75,7 @@ public class BookController {
 			@Valid @RequestBody BookRequestDTO bookRequestDTO
 	) {
 
-		BookResponseDTO updatedBook = bookService.updateBook(id, bookRequestDTO);
+		BookResponseDTO updatedBook = bookService.update(id, bookRequestDTO);
 
 		return ResponseEntity.ok().body(updatedBook);
 	}

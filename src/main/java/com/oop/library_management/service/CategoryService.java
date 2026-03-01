@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class CategoryService implements CrudService<CategoryRequestDTO, CategoryResponseDTO> {
 
 	private final CategoryRepository categoryRepository;
 	private final CategoryMapper categoryMapper;
@@ -73,8 +73,9 @@ public class CategoryService {
 		);
 	}
 
+	@Override
 	@Transactional
-	public CategoryResponseDTO createCategory(
+	public CategoryResponseDTO create(
 			CategoryRequestDTO categoryRequestDTO
 	) {
 
@@ -92,11 +93,24 @@ public class CategoryService {
 		return categoryMapper.toDTO(savedCategory);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public CategoryResponseDTO getCategoryById(Long id) {
+	public CategoryResponseDTO getById(Long id) {
 
 		return categoryRepository.findById(id)
 				.map(categoryMapper::toDTO)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+	}
+
+	/** Not supported — categories are immutable reference data. */
+	@Override
+	public CategoryResponseDTO update(Long id, CategoryRequestDTO request) {
+		throw new UnsupportedOperationException("Category update is not supported");
+	}
+
+	/** Not supported — categories are immutable reference data. */
+	@Override
+	public void delete(Long id) {
+		throw new UnsupportedOperationException("Category deletion is not supported");
 	}
 }

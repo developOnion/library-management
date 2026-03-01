@@ -36,4 +36,9 @@ public class Librarian extends User {
 	public void setPosition(LibrarianPosition position) {
 		this.position = position;
 	}
+
+	@Override
+	public String getDisplayInfo() {
+		return "Librarian [" + position + "] " + getFullName();
+	}
 }

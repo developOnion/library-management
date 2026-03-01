@@ -117,7 +117,7 @@ public class AuthorController {
 			@PathVariable @Min(1) Long id
 	) {
 
-		AuthorResponseDTO author = authorService.getAuthorById(id);
+		AuthorResponseDTO author = authorService.getById(id);
 
 		return ResponseEntity.ok().body(author);
 	}
@@ -159,7 +159,7 @@ public class AuthorController {
 			@Valid @RequestBody AuthorRequestDTO authorRequestDTO
 	) {
 
-		AuthorResponseDTO createdAuthor = authorService.createAuthor(authorRequestDTO);
+		AuthorResponseDTO createdAuthor = authorService.create(authorRequestDTO);
 
 		return ResponseEntity.ok().body(createdAuthor);
 	}

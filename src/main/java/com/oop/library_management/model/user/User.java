@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class User extends BaseEntity {
 
+	public abstract String getDisplayInfo();
+
   @Column(nullable = false, unique = true, length = 30)
   @NotBlank(message = "Username is required")
   @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")

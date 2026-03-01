@@ -119,7 +119,7 @@ public class CategoryController {
 	) {
 
 		CategoryResponseDTO category =
-				categoryService.getCategoryById(id);
+				categoryService.getById(id);
 
 		return ResponseEntity.ok().body(category);
 	}
@@ -165,7 +165,7 @@ public class CategoryController {
 	) {
 
 		CategoryResponseDTO createdCategory =
-				categoryService.createCategory(categoryRequestDTO);
+				categoryService.create(categoryRequestDTO);
 
 		return ResponseEntity.ok().body(createdCategory);
 	}

@@ -1,20 +1,19 @@
 package com.oop.library_management.model.fine;
 
+import com.oop.library_management.model.common.BaseEntity;
 import com.oop.library_management.model.loan.Loan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Entity
 @Table(name = "fines")
-public class Fine {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+@EntityListeners(AuditingEntityListener.class)
+public class Fine extends BaseEntity {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "loan_id", nullable = false)
@@ -39,7 +38,6 @@ public class Fine {
 		this.amount = amount.setScale(2, RoundingMode.HALF_UP);
 	}
 
-	public Long getId() { return id; }
 	public Loan getLoan() { return loan; }
 	public BigDecimal getAmount() { return amount; }
 	public boolean isPaid() { return paid; }

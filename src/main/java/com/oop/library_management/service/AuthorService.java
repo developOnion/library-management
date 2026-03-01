@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class AuthorService {
+public class AuthorService implements CrudService<AuthorRequestDTO, AuthorResponseDTO> {
 
 	private final AuthorRepository authorRepository;
 	private final AuthorMapper authorMapper;
@@ -71,16 +71,18 @@ public class AuthorService {
 		);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
-	public AuthorResponseDTO getAuthorById(Long id) {
+	public AuthorResponseDTO getById(Long id) {
 
 		return authorRepository.findById(id)
 				.map(authorMapper::toDTO)
 				.orElseThrow(() -> new ResourceNotFoundException("Author not found"));
 	}
 
+	@Override
 	@Transactional
-	public AuthorResponseDTO createAuthor(
+	public AuthorResponseDTO create(
 			AuthorRequestDTO authorRequestDTO
 	) {
 
@@ -103,5 +105,17 @@ public class AuthorService {
 		Author savedAuthor = authorRepository.save(author);
 
 		return authorMapper.toDTO(savedAuthor);
+	}
+
+	/** Not supported — authors are immutable reference data. */
+	@Override
+	public AuthorResponseDTO update(Long id, AuthorRequestDTO request) {
+		throw new UnsupportedOperationException("Author update is not supported");
+	}
+
+	/** Not supported — authors are immutable reference data. */
+	@Override
+	public void delete(Long id) {
+		throw new UnsupportedOperationException("Author deletion is not supported");
 	}
 }

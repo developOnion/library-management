@@ -37,4 +37,9 @@ public class Member extends User {
 
     return "MEM-" + String.format("%05d", getId());
   }
+
+  @Override
+  public String getDisplayInfo() {
+    return "Member [" + getMembershipNumber() + "] " + getFullName();
+  }
 }

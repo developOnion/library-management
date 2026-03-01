@@ -1,20 +1,19 @@
 package com.oop.library_management.model.loan;
 
 import com.oop.library_management.model.book.Book;
+import com.oop.library_management.model.common.BaseEntity;
 import com.oop.library_management.model.user.Librarian;
 import com.oop.library_management.model.user.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "loans")
-public class Loan {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+@EntityListeners(AuditingEntityListener.class)
+public class Loan extends BaseEntity {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "librarian_id", nullable = false)
@@ -59,10 +58,6 @@ public class Loan {
     this.status = LoanStatus.BORROWED;
   }
 
-  public Long getId() {
-    return id;
-  }
-
   public Member getMember() {
     return member;
   }
@@ -85,6 +80,14 @@ public class Loan {
 
   public LoanStatus getStatus() {
     return status;
+  }
+
+  public Librarian getLibrarian() {
+    return librarian;
+  }
+
+  public void setLibrarian(Librarian librarian) {
+    this.librarian = librarian;
   }
 
   public void setReturnDate(LocalDate returnDate) {
