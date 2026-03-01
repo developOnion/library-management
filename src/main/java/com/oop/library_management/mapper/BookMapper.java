@@ -4,10 +4,8 @@ import com.oop.library_management.dto.book.BookResponseDTO;
 import com.oop.library_management.model.book.Book;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
-public class BookMapper {
+public class BookMapper extends BaseMapper<Book, BookResponseDTO> {
 
 	private final AuthorMapper authorMapper;
 	private final CategoryMapper categoryMapper;
@@ -21,6 +19,7 @@ public class BookMapper {
 		this.categoryMapper = categoryMapper;
 	}
 
+	@Override
 	public BookResponseDTO toDTO(Book book) {
 
 		if (book == null) {

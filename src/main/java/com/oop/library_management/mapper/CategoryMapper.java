@@ -5,8 +5,9 @@ import com.oop.library_management.model.category.Category;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryMapper {
+public class CategoryMapper extends BaseMapper<Category, CategoryResponseDTO> {
 
+	@Override
 	public CategoryResponseDTO toDTO(Category category) {
 
 		if (category == null) {
