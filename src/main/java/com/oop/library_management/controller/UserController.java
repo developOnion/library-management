@@ -1,10 +1,11 @@
 package com.oop.library_management.controller;
 
-import com.oop.library_management.dto.UserRequestDTO;
-import com.oop.library_management.dto.UserResponseDTO;
+import com.oop.library_management.dto.user.UserRequestDTO;
+import com.oop.library_management.dto.user.UserResponseDTO;
 
-import com.oop.library_management.dto.validationgroup.CreateLibrarianValidation;
+import com.oop.library_management.validation.validationgroup.CreateLibrarianValidation;
 import com.oop.library_management.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users/register")
+@Tag(name = "User Management", description = "Endpoints for managing library users")
 public class UserController {
 
 	private final UserService userService;
@@ -23,7 +25,8 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAuthority('LIBRARIAN')")
-	@PostMapping("/members")
+	@PostMapping("members")
+	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<UserResponseDTO> registerMember(
 			@Validated({Default.class})
 			@RequestBody UserRequestDTO userDTO
@@ -35,7 +38,8 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAuthority('LIBRARIAN')")
-	@PostMapping("/librarians")
+	@PostMapping("librarians")
+	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<UserResponseDTO> registerLibrarian(
 			@Validated({Default.class, CreateLibrarianValidation.class})
 			@RequestBody UserRequestDTO userDTO

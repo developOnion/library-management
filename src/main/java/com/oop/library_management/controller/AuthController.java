@@ -1,7 +1,9 @@
 package com.oop.library_management.controller;
 
-import com.oop.library_management.dto.LoginRequestDTO;
+import com.oop.library_management.dto.auth.AuthRequestDTO;
+import com.oop.library_management.dto.auth.AuthResponseDTO;
 import com.oop.library_management.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication")
 public class AuthController {
 
 	private final UserService userService;
@@ -23,11 +26,11 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(
-			@Valid @RequestBody LoginRequestDTO loginRequest
+	public ResponseEntity<AuthResponseDTO> login(
+			@Valid @RequestBody AuthRequestDTO loginRequest
 	) {
 
-		String token = userService.verifyUserCredentials(loginRequest);
+		AuthResponseDTO token = userService.authenticate(loginRequest);
 
 		return ResponseEntity.ok().body(token);
 	}

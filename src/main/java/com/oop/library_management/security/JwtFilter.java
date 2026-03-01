@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,12 +21,12 @@ import java.time.LocalDateTime;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-	private final JwtUtil jwtUtil;
-	private final CustomUserDetailsService userDetailsService;
+	private final JwtService jwtUtil;
+	private final UserDetailsServiceImpl userDetailsService;
 
 	public JwtFilter(
-			JwtUtil jwtUtil,
-			CustomUserDetailsService userDetailsService
+			JwtService jwtUtil,
+			UserDetailsServiceImpl userDetailsService
 	) {
 
 		this.jwtUtil = jwtUtil;
@@ -35,21 +36,28 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(
 			HttpServletRequest request,
-			HttpServletResponse response,
-			FilterChain filterChain
+			@NonNull HttpServletResponse response,
+			@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
 
-		String authHeader = request.getHeader("Authorization");
-		String token = null;
-		String username = null;
+		if (request.getServletPath().contains("/api/v1/auth")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+		final String authHeader = request.getHeader("Authorization");
+		final String token;
+		final String username;
+
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		try {
 
-			if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
-				token = authHeader.substring(7);
-				username = jwtUtil.extractUsername(token);
-			}
+			token = authHeader.substring(7);
+			username = jwtUtil.extractUsername(token);
 
 			if (username != null &&
 					SecurityContextHolder.getContext().getAuthentication() == null
@@ -78,8 +86,6 @@ public class JwtFilter extends OncePerRequestFilter {
 			handleJwtException(response, "JWT token has expired");
 		} catch (MalformedJwtException e) {
 			handleJwtException(response, "Invalid JWT token");
-		} catch (Exception e) {
-			handleJwtException(response, "JWT authentication failed");
 		}
 	}
 

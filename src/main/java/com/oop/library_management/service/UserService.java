@@ -1,42 +1,46 @@
 package com.oop.library_management.service;
 
-import com.oop.library_management.dto.LoginRequestDTO;
-import com.oop.library_management.dto.UserRequestDTO;
-import com.oop.library_management.dto.UserResponseDTO;
+import com.oop.library_management.dto.auth.AuthRequestDTO;
+import com.oop.library_management.dto.auth.AuthResponseDTO;
+import com.oop.library_management.dto.user.UserRequestDTO;
+import com.oop.library_management.dto.user.UserResponseDTO;
 import com.oop.library_management.exception.AuthenticationException;
-import com.oop.library_management.exception.ValidationException;
+import com.oop.library_management.exception.InvalidUserDataException;
 import com.oop.library_management.mapper.UserMapper;
-import com.oop.library_management.model.Librarian;
-import com.oop.library_management.model.Member;
-import com.oop.library_management.model.Role;
-import com.oop.library_management.model.User;
+import com.oop.library_management.model.user.Librarian;
+import com.oop.library_management.model.user.Member;
+import com.oop.library_management.model.user.Role;
+import com.oop.library_management.model.user.User;
 import com.oop.library_management.repository.UserRepository;
-import com.oop.library_management.security.JwtUtil;
-import jakarta.transaction.Transactional;
+import com.oop.library_management.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 	private final AuthenticationManager authManager;
-	private final JwtUtil jwtService;
+	private final JwtService jwtService;
+	private final PasswordEncoder passwordEncoder;
 
 	public UserService(
 			UserRepository userRepository,
-			UserMapper userMapper, AuthenticationManager authManager, JwtUtil jwtService
+			UserMapper userMapper,
+			AuthenticationManager authManager,
+			JwtService jwtService,
+			PasswordEncoder passwordEncoder
 	) {
 
 		this.userMapper = userMapper;
 		this.userRepository = userRepository;
 		this.authManager = authManager;
 		this.jwtService = jwtService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Transactional
@@ -44,17 +48,17 @@ public class UserService {
 
 		validateUserRequest(request);
 
-		Member member = new Member(
-				request.getUsername(),
-				passwordEncoder.encode(request.getPassword()),
-				request.getFirstName(),
-				request.getLastName(),
+		User user = new Member(
+				request.username(),
+				passwordEncoder.encode(request.password()),
+				request.firstName(),
+				request.lastName(),
 				Role.MEMBER
 		);
 
-		Member savedMember = userRepository.save(member);
+		User savedUser = userRepository.save(user);
 
-		return userMapper.toDTO(savedMember);
+		return userMapper.toDTO(savedUser);
 	}
 
 	@Transactional
@@ -62,45 +66,46 @@ public class UserService {
 
 		validateLibrarianRequest(userDTO);
 
-		Librarian librarian = new Librarian(
-				userDTO.getUsername(),
-				passwordEncoder.encode(userDTO.getPassword()),
-				userDTO.getFirstName(),
-				userDTO.getLastName(),
+		User user = new Librarian(
+				userDTO.username(),
+				passwordEncoder.encode(userDTO.password()),
+				userDTO.firstName(),
+				userDTO.lastName(),
 				Role.LIBRARIAN,
-				userDTO.getPosition()
+				userDTO.position()
 		);
 
-		Librarian savedLibrarian = userRepository.save(librarian);
+		User savedUser = userRepository.save(user);
 
-		return userMapper.toDTO(savedLibrarian);
+		return userMapper.toDTO(savedUser);
 	}
 
 	@Transactional
-	public String verifyUserCredentials(LoginRequestDTO loginRequest) {
+	public AuthResponseDTO authenticate(AuthRequestDTO loginRequest) {
 
 		try {
 			// Authenticate user credentials
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-					loginRequest.getUsername(),
-					loginRequest.getPassword()
+					loginRequest.username(),
+					loginRequest.password()
 			);
 
 			authManager.authenticate(authToken);
 
 			// Fetch user from database to get the role
-			User user = userRepository.findByUsername(loginRequest.getUsername())
+			User user = userRepository.findByUsername(loginRequest.username())
 					.orElseThrow(() -> new AuthenticationException("User not found"));
 
 			// Update last login
 			user.setLastLogin(java.time.LocalDateTime.now());
 			userRepository.save(user);
 
-			return jwtService.generateToken(
+			String jwtToken = jwtService.generateToken(
 					user.getUsername(),
 					user.getRole()
 			);
 
+			return new AuthResponseDTO(jwtToken);
 		} catch (org.springframework.security.core.AuthenticationException e) {
 			throw new AuthenticationException("Invalid username or password");
 		}
@@ -126,24 +131,24 @@ public class UserService {
 
 		validateUserRequest(userDTO);
 
-		if (userDTO.getPosition() == null) {
-			throw new ValidationException("Librarian position is required");
+		if (userDTO.position() == null) {
+			throw new InvalidUserDataException("Librarian position is required");
 		}
 	}
 
 	private void validateUserRequest(UserRequestDTO userDTO) {
 
-		if (userRepository.existsByUsername(userDTO.getUsername())) {
-			throw new ValidationException("Username already exists");
+		if (userRepository.existsByUsername(userDTO.username())) {
+			throw new InvalidUserDataException("Username already exists");
 		}
 
-		if (!isValidUsername(userDTO.getUsername())) {
-			throw new ValidationException(
+		if (!isValidUsername(userDTO.username())) {
+			throw new InvalidUserDataException(
 					"Username must be 3-30 characters long and contain only letters and numbers");
 		}
 
-		if (!isValidPassword(userDTO.getPassword())) {
-			throw new ValidationException(
+		if (!isValidPassword(userDTO.password())) {
+			throw new InvalidUserDataException(
 					"Password must contain at least one number and one character");
 		}
 	}
