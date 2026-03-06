@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import com.oop.library_management.exception.InsufficientAmount;
 import com.oop.library_management.exception.ResourceNotFoundException;
 import com.oop.library_management.model.book.Book;
-import com.oop.library_management.dto.loan.BorrowRequestDTO;
-import com.oop.library_management.dto.loan.BorrowResponseDTO;
-import com.oop.library_management.dto.loan.ReturnRequestDTO;
+import com.oop.library_management.model.common.PageResponse;
+import com.oop.library_management.dto.loan.*;
 import com.oop.library_management.repository.LibrarianRepository;
 import com.oop.library_management.repository.BookRepository;
 import com.oop.library_management.repository.MemberRepository;
@@ -16,12 +15,19 @@ import com.oop.library_management.model.loan.LoanStatus;
 import com.oop.library_management.model.user.Librarian;
 import com.oop.library_management.model.user.Member;
 import com.oop.library_management.repository.LoanRepository;
+import com.oop.library_management.mapper.LoanHistoryMapper;
 import com.oop.library_management.mapper.LoanMapper;
 import com.oop.library_management.security.UserPrincipal;
 import com.oop.library_management.dto.loan.BookAmount;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -33,14 +39,44 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
     private final LibrarianRepository librarianRepository;
+    private final LoanHistoryMapper loanHistoryMapper;
 
-    public LoanService(MemberRepository memberRepository, BookRepository bookRepository, LoanRepository loanRepository, LoanMapper loanMapper, LibrarianRepository librarianRepository) {
+    public LoanService(MemberRepository memberRepository, BookRepository bookRepository, LoanRepository loanRepository, LoanMapper loanMapper, LibrarianRepository librarianRepository, LoanHistoryMapper loanHistoryMapper) {
         this.memberRepository = memberRepository;
         this.bookRepository = bookRepository;
         this.loanRepository = loanRepository;
         this.loanMapper = loanMapper;
         this.librarianRepository = librarianRepository;
+        this.loanHistoryMapper = loanHistoryMapper;
     }
+
+    @Transactional(readOnly = true)
+	public PageResponse<LoanHistoryResponseDTO> findLoanById(
+            Long userId,
+			int page,
+			int size
+	) {
+
+		Pageable pageable = PageRequest.of(
+				page,
+				size,
+				Sort.by("loanDate").descending()
+		);
+        Page<Loan> loans = loanRepository.findByMember_Id(userId, pageable);
+		List<LoanHistoryResponseDTO> bookResponseDTOs = loans.stream()
+				.map(loanHistoryMapper::toDTO)
+				.toList();
+
+		return new PageResponse<>(
+				bookResponseDTOs,
+				loans.getNumber(),
+				loans.getSize(),
+				loans.getTotalElements(),
+				loans.getTotalPages(),
+				loans.isFirst(),
+				loans.isLast()
+		);
+	}
 
     public BorrowResponseDTO borrowBook(BorrowRequestDTO borrowRequestDTO) {
         
@@ -58,11 +94,8 @@ public class LoanService {
                 .orElseThrow(() -> new ResourceNotFoundException("Member with membership number " + borrowRequestDTO.membershipNumber() + " does not exist."));
 
         List<Long> bookIds = borrowRequestDTO.bookAmounts().stream().map(BookAmount::bookId).toList();
-        System.out.println("bookIds = " + bookIds);
         List<Book> books = bookRepository.findAllById(bookIds);
         if (books.size() != bookIds.size()) {
-            System.out.println("Books.size() = " + books.size());
-            System.out.println("bookIds.size() = " + bookIds.size());
             throw new ResourceNotFoundException("One or more books do not exist.");
         }
         for (BookAmount bookAmount : borrowRequestDTO.bookAmounts()) {
@@ -123,14 +156,84 @@ public class LoanService {
 
         BorrowResponseDTO response = new BorrowResponseDTO(new ArrayList<>());
         for (BookAmount bookAmount : returnRequestDTO.bookAmounts()) {
-            for (int i = 0 ; i < bookAmount.amount(); i++) {
-                Loan loan = loanRepository.findFirstByMember_IdAndBook_IdAndStatusNot(member.getId(), bookAmount.bookId(), LoanStatus.RETURNED)
-                        .orElseThrow(() -> new ResourceNotFoundException("Loan for member " + member.getMembershipNumber() + " and book ID " + bookAmount.bookId() + " does not exist."));
+            List<Loan> loans = loanRepository.findTopByMember_IdAndBook_IdAndStatusNot(member.getId(), bookAmount.bookId(), LoanStatus.RETURNED, bookAmount.amount());
+
+            Book book = loans.get(0).getBook();
+            book.setAvailableCopies(book.getAvailableCopies() + bookAmount.amount());
+            bookRepository.save(book);
+            
+            loans.forEach( loan -> {
+                loan.setReturnDate(LocalDate.now());
                 loan.setStatus(LoanStatus.RETURNED);
-                loanRepository.save(loan);
+            });
+
+            loanRepository.saveAll(loans);
+            
+            loans.forEach(loan -> {
                 response.loans().add(loanMapper.toDTO(loan));
-            }
+            });
         }
         return response;
     }
+
+    public PageResponse<LoanHistoryResponseDTO> getLoanHistory(long userId, int page) {
+
+        //validation
+        if(!memberRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("Member with ID " + userId + " does not exist.");
+        }
+
+        // Implement loan history retrieval logic based on userId, status, and page
+        Pageable pageable = PageRequest.of(page, 10); // Adjust page size as needed
+        Page<Loan> loans = loanRepository.findByMember_Id(userId, pageable);
+        List<LoanHistoryResponseDTO> loanHistory = loans.getContent().
+                stream()
+                .map(loanHistoryMapper::toDTO)
+                .toList();
+        
+        return new PageResponse<>(
+            loanHistory,
+            loans.getNumber(),
+            loans.getSize(),
+            loans.getTotalElements(),
+            loans.getTotalPages(),
+            loans.isFirst(),
+            loans.isLast()
+        );
+
+    }
+
+    public PageResponse<LoanHistoryResponseDTO> getLoanHistory(long userId, String status, int page) {
+
+        //validation
+        if(!memberRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("Member with ID " + userId + " does not exist.");
+        }
+
+        LoanStatus loanStatus;
+        try {
+            loanStatus = LoanStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid loan status: " + status);
+        }
+
+        // Implement loan history retrieval logic based on userId, status, and page
+        Pageable pageable = PageRequest.of(page, 10); // Adjust page size as needed
+        Page<Loan> loans = loanRepository.findByMember_IdAndStatus(userId, loanStatus, pageable);
+        List<LoanHistoryResponseDTO> loanHistory = loans.getContent().
+                stream()
+                .map(loanHistoryMapper::toDTO)
+                .toList();
+        
+        return new PageResponse<>(
+            loanHistory,
+            loans.getNumber(),
+            loans.getSize(),
+            loans.getTotalElements(),
+            loans.getTotalPages(),
+            loans.isFirst(),
+            loans.isLast()
+        );
+    }
+
 }

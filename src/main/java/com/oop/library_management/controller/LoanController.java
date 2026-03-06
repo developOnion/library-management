@@ -18,7 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.oop.library_management.dto.loan.BorrowRequestDTO;
 import com.oop.library_management.dto.loan.BorrowResponseDTO;
+import com.oop.library_management.dto.loan.LoanHistoryResponseDTO;
 import com.oop.library_management.dto.loan.ReturnRequestDTO;
+import com.oop.library_management.model.common.PageResponse;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -51,5 +58,22 @@ public class LoanController {
         BorrowResponseDTO response = loanService.returnBook(returnRequestDTO);
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/history/{userId}")
+    @PreAuthorize("hasAuthority('LIBRARIAN') or (hasAuthority('MEMBER') and #userId == authentication.principal.id)")
+    public ResponseEntity<PageResponse<LoanHistoryResponseDTO>> getLoanHistory(
+            @PathVariable Long userId,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        PageResponse<LoanHistoryResponseDTO> response;
+        if(status != null && !status.trim().isEmpty()) {
+            response = loanService.getLoanHistory(userId, status, page);
+        } else {
+            response = loanService.getLoanHistory(userId, page);
+        }
+        return ResponseEntity.ok().body(response);
+    }
+    
  
 }
